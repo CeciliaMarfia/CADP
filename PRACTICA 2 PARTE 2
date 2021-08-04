@@ -1,0 +1,746 @@
+{1. Dado el siguiente programa:}
+program Ejercicio3;
+procedure suma(num1: integer; var num2:integer);
+ begin
+ num2 := num1 + num2;
+ num1 := 0;
+ end;
+var
+ i, x : integer;
+begin
+ read(x); { leo la variable x }
+ for i:= 1 to 5 do
+ suma(i,x);
+ write(x); { imprimo las variable x }
+end.
+//a. ¿Qué imprime si se lee el valor 10 en la variable x ? imprime 25
+//b. ¿Qué imprime si se lee el valor 10 en la variable x y se cambia el encabezado del procedure por:
+//procedure suma(num1: integer; num2:integer); devuelve 10
+//c. ¿Qué sucede si se cambia el encabezado del procedure por:
+procedure suma(var num1: integer; var num2:integer); // no puedo modificar el valor del índice del for
+
+{. ¿Qué imprime si se lee la siguiente secuencia de valores? 250, 35, 100}
+Program ejercicio4;
+procedure digParesImpares(num : integer; var par, impar : integer);
+var
+    dig: integer;
+begin
+    while (num <> 0) do begin //250//25// 2
+                            //35//3
+                            //100/0/0
+        dig:= num mod 10; // me quedo con el 0, me quedo con el 5 // me quedo con el 2
+                        // me quedo con el 5, me quedo con el 3
+                        //me quedo con el 0, me quedo con el 0, me quedo con el 0, me quedo con el 1
+    if((dig mod 2)= 0) then // el 0 es par, el 5 es impar, el 2 es par
+                            //el 5 es impar, el 3 es impar
+                            //el 0 es par, el 0 es par, el 1 es impar
+        par := par + 1//par=1, el par sigue en 1, el par pasa a 2
+    else            //el par sigue en 2, el par sigue en 2
+                    //el par es 3, el par es 4
+        impar:= impar +1;// impar es 0, impar es 1, impar sigue en 1
+                        // impar ahora es 2, impar ahora es 3
+                        // impar ahora es 4
+        num := num DIV 10;//25//2// num es 0
+                        //3// es 0
+                        //10//1
+    end;
+end;
+var
+    dato, par, impar, total, cant : integer;
+begin
+    par := 0;
+    impar := 0;
+    repeat
+        read(dato);
+        digParesImpares(dato,par,impar);
+    until (dato = 100);
+    writeln('Pares: ',par, 'Ímpares:', impar);// 2 , 1
+end.
+//Si leo 250 entonces: 
+en qué línea se encuentra cada error y en qué consiste:}
+program ejercicio5;
+{ suma los números entre a y b, y retorna el resultado en c }
+procedure sumar(a, b, c : integer); //faltaba ; asigna c como parametro y es una cte
+var
+    suma : integer; //no declara la variable i
+begin //falta inicializar suma
+    for i := a to b do 
+        suma := suma + i;
+    c := c + suma;
+end;
+var
+    result : integer; //1.las variables a y b no están declaradas
+    //no declara ok
+begin
+    result := 0;
+    readln(a); readln(b);
+    sumar(a, b, 0);
+    write('La suma total es ',result);
+    { averigua si el resultado final estuvo entre 10 y 30}
+    ok := (result >= 10) or (result <= 30);
+    if (not ok) then
+        write ('La suma no quedó entre 10 y 30');
+end.
+//ESTE HAY QUE REVISARLO
+
+{4. El siguiente programa intenta resolver un enunciado. Sin embargo, el código posee 5 errores. Indicar en qué
+línea se encuentra cada error y en qué consiste el error.
+Enunciado: Realice un programa que lea datos de 130 programadores Java de una empresa. De cada
+programador se lee el número de legajo y el salario actual. El programa debe imprimir el total del dinero
+destinado por mes al pago de salarios, y el salario del empleado mayor legajo.}
+program programadores;
+procedure leerDatos(var legajo: integer; salario : real); //los parametros están al reves de la invocación, salario debe ser por ref
+begin
+    writeln('Ingrese el nro de legajo y el salario');
+    read(legajo);
+    read(salario);
+end;
+procedure actualizarMaximo(nuevoLegajo:integer; nuevoSalario:real; var maxLegajo:integer);
+var
+    maxSalario : real;
+begin
+    if (nuevoLegajo > maxLegajo) then begin
+        maxLegajo:= nuevoLegajo;
+        maxSalario := nuevoSalario
+    end;
+end;
+var
+    legajo, maxLegajo, i : integer;//falta declarar sumaSalarios
+    salario, maxSalario : real;
+begin
+    sumaSalarios := 0; //FALTA INICIALIZAR maxSalario y maxLegajo acá porque sino se reinicia en cada vuelta del for
+    for i := 1 to 130 do begin
+        leerDatos(salario, legajo);
+        actualizarMaximo(legajo, salario, maxLegajo);//falta enviar maxSalario
+        sumaSalarios := sumaSalarios + salario;
+    end;
+    writeln('En todo el mes se gastan', sumaSalarios, 'pesos' );
+    writeln('El salario del empleado más nuevo es',maxSalario);
+end. //ESTE HAY QUE REVISARLO
+
+{5. a. Realizar un módulo que reciba un par de números (numA,numB) y retorne si numB es el doble de numA.
+b. Utilizando el módulo realizado en el inciso a., realizar un programa que lea secuencias de pares de números
+hasta encontrar el par (0,0), e informe la cantidad total de pares de números leídos y la cantidad de pares en
+las que numB es el doble de numA.
+Ejemplo: si se lee la siguiente secuencia: (1,2) (3,4) (9,3) (7,14) (0,0) el programa debe informar los valores
+4 (cantidad de pares leídos) y 2 (cantidad de pares en los que numB es el doble de numA).}
+program Hello;
+function calcularDoble(numA,numB:integer):boolean;
+begin
+    calcularDoble:=(numB=numA*2);
+end;
+var 
+    numA, numB, cantParesLeidos, elDoble:integer;
+begin
+    cantParesLeidos:=0;
+    elDoble:=0;
+    writeln('Ingrese numA:');
+    readln(numA);
+    writeln('Ingrese numB:');
+    readln(numB);
+    while ((numA <> 0) and (numB <> 0)) do begin
+        cantParesLeidos:=cantParesLeidos+1;
+        if (calcularDoble(numA,numB)) then elDoble:=elDoble+1;
+        writeln('Ingrese numA:');
+        readln(numA);
+        writeln('Ingrese numB:');
+        readln(numB);
+    end;
+    writeln('Cantidad de pares leídos: ',cantParesLeidos);
+    writeln('Cantidad de pares en los que numB es el doble de numA: ', elDoble);
+end.
+
+{8. Realizar un programa modularizado que lea datos de 100 productos de una tienda de ropa. Para cada producto
+debe leer el precio, código y tipo (pantalón, remera, camisa, medias, campera, etc.). Informar:
+● Código de los dos productos más baratos.
+● Código del producto de tipo “pantalón” más caro.
+● Precio promedio}
+program Hello;
+const
+    fin = 100;
+Type
+	cadena25 = string[25];
+Procedure leerDatos(var precio:real; var codigo:integer; var tipo:cadena25); //estos van con VAR?
+Begin
+	writeln('Ingrese el tipo de prenda');
+	readln(tipo);
+	writeln('Ingrese el precio del ',tipo);
+	readln(precio);
+	writeln('Ingrese el codigo del ',tipo);
+	readln(codigo);
+end;
+
+procedure dosMasbaratos(precio:real; var precioMin1:real; var precioMin2:real; codigo:integer; var codMin1:integer; var codMin2:integer);
+Begin
+	if (precio<precioMin1) then Begin
+		precioMin2:=precioMin1;
+		codMin2:=codMin1;
+		precioMin1:=precio;
+		codMin1:=codigo;
+	end
+	else if (precio<precioMin2) then Begin
+		precioMin2:=precio;
+		codMin2:=codigo;
+	end;
+end;
+
+procedure pantalonCaro (precio:real; var precioMax:real; codigo:integer; var codMax:integer);
+Begin
+	if(precio>precioMax) then Begin
+		precioMax:=precio;
+		codMax:=codigo;
+	end;
+end;
+Var
+	precio, precioMax, precioMin1, precioMin2, prom,suma:Real;
+	codigo, codMax, codMin1, codMin2, cont,i:integer;
+	tipo:cadena25;
+Begin
+    suma:=0;
+	precioMax:=-1;
+	precioMin1:=999;
+	precioMin2:=999;
+	for i:=1 to fin do Begin 
+		leerDatos(precio,codigo,tipo);
+		suma:=suma+precio;
+		dosMasbaratos(precio,precioMin1,precioMin2,codigo,codMin1,codMin2);
+		if (tipo ='pantalon') then 
+		    pantalonCaro(precio,precioMax,codigo,codMax);
+	end;
+	prom:=suma/fin;
+	writeln('El producto más barato fue el: ',codMin1);
+	writeln('El segundo producto más barato fue el:' ,codMin2);
+	writeln('El pantalon más caro fue el: ',codMax);
+	writeln('El precio promedio fue de: ',prom:2:2);
+end.
+{9. a. Realizar un módulo que reciba como parámetro un número entero y retorne la cantidad de dígitos que
+posee y la suma de los mismos.
+b. Utilizando el módulo anterior, realizar un programa que lea una secuencia de números e imprima la
+cantidad total de dígitos leídos. La lectura finaliza al leer un número cuyos dígitos suman exactamente 10, el
+cual debe procesarse.}
+program Hello;
+procedure descomponer(num:integer; var cantDig,suma:integer);
+var 
+    dig:integer;
+begin
+    while (num <> 0) do begin
+        dig:= num mod 10;
+        cantDig:=cantDig+1;
+        suma:=suma+dig;
+        num:= num div 10;
+    end;
+end;
+var
+    num,cantDig,suma:integer;
+begin
+    suma:=0;
+    repeat//b
+        write ('Ingrese un número:');
+        readln(num);
+        descomponer(num,cantDig,suma);
+        writeln('Cantidad de dígitos que posee es: ', cantDig);
+        writeln('La suma de los mismos es: ',suma);
+    until (suma = 10);//b
+end.
+
+{10. Realizar un programa modularizado que lea secuencia de números enteros. La lectura finaliza cuando llega
+el número 123456, el cual no debe procesarse. Informar en pantalla para cada número la suma de sus dígitos
+pares y la cantidad de dígitos impares que posee.}
+program Hello;
+procedure paresEimpares(num:integer; var sumaPares,cantDigImp:integer);
+var
+    dig:integer;
+begin
+    sumaPares:=0;
+    cantDigImp:=0;
+    while(num <> 0) do begin
+        dig:= num mod 10;
+        if(dig mod 2 = 0) then
+            sumaPares:=sumaPares+dig
+        else cantDigImp:=cantDigImp+1;
+        num:= num div 10;
+    end;
+end;
+var
+    num,sumaPares,cantDigImp:integer;
+begin
+    writeln ('Ingrese un número:');
+    readln(num);
+    while (num <> 123456) do begin
+        paresEimpares(num,sumaPares,cantDigImp);
+        writeln('Del número ', num, ' la suma de sus dígitos pares es:', sumaPares);
+        writeln('Y la cantidad de dígitos impares que posee:',cantDigImp);
+        writeln ('Ingrese un número:');
+        readln(num);
+    end;
+end.
+
+{11. Realizar un programa modularizado que lea información de alumnos de una facultad. Para cada alumno se
+lee: nro de inscripción, apellido y nombre. La lectura finaliza cuando se ingresa el alumno con nro de inscripción
+1200, que debe procesarse. Se pide calcular e informar:
+● Apellido de los dos alumnos con nro de inscripción más chico.
+● Nombre de los dos alumnos con nro de inscripción más grande.
+● Porcentaje de alumnos con nro de inscripción par.}
+program Hello;
+type
+    cadena30 = string[30];
+procedure inscripcionChico(nroInscrip:integer;ape:cadena30;var inscripmin1,inscripmin2:integer; var apemin1,apemin2:cadena30);
+begin
+    if (nroInscrip < inscripmin1) then begin
+        inscripmin2:=inscripmin1;
+        apemin2:=apemin1;
+        inscripmin1:=nroInscrip;
+        apemin1:=ape;
+    end
+    else if(nroInscrip < inscripmin2) then begin
+        inscripmin2:=nroInscrip;
+        apemin2:=ape;
+    end;
+end;
+procedure inscripcionGrande(nroInscrip:integer; nom:cadena30;var inscripmax1,inscripmax2:integer ;var nommax1,nommax2:cadena30);
+begin
+    if (nroInscrip > inscripmax1) then begin
+        inscripmax2:=inscripmax1;
+        nommax2:=nommax1;
+        inscripmax1:=nroInscrip;
+        nommax1:=nom;
+    end
+    else if (nroInscrip > inscripmax2) then begin
+            inscripmax2:=nroInscrip;
+            nommax2:=nom;
+    end;
+end;
+var
+    nroInscrip,cantAlumnos,alumnosPares,inscripmin1,inscripmin2,inscripmax1,inscripmax2:integer;
+    ape,nom,apemin1,apemin2,nommax1,nommax2:cadena30;
+    porcentajeAlu:real;
+begin
+    inscripmax1:=-1;
+    inscripmax2:=-1;
+    inscripmin1:=999;
+    inscripmin2:=999;
+    cantAlumnos:=0;
+    alumnosPares:=0;
+    repeat
+        writeln ('Nro de inscripción:');
+        readln(nroInscrip);
+        cantAlumnos:=cantAlumnos+1;
+        writeln('Apellido:');
+        readln(ape);
+        writeln('Nombre:');
+        readln(nom);
+        inscripcionChico(nroInscrip,ape,inscripmin1,inscripmin2,apemin1,apemin2);
+        inscripcionGrande(nroInscrip,nom,inscripmax1,inscripmax2,nommax1,nommax2);
+        if (nroInscrip mod 2 = 0) then
+            alumnosPares:=alumnosPares+1;
+    until (nroInscrip = 1200);
+    end;
+    porcentajeAlu:= (alumnosPares/cantAlumnos)*100;
+    writeln('Apellido de los dos alumnos con nro de inscripción más chico: ',apemin1,' y ',apemin2);
+    writeln('Nombre de los dos alumnos con nro de inscripción más grande: ',nommax1,' y ',nommax2);
+    writeln('Porcentaje de alumnos con nro de inscripción par',porcentajeAlu:2:2,'%');
+end.
+
+{12. Realizar un programa modularizado que lea una secuencia de caracteres y verifique si cumple con el patrón
+A$B#, donde:
+- A es una secuencia de sólo letras vocales
+- B es una secuencia de sólo caracteres alfabéticos sin letras vocales
+- los caracteres $ y # seguro existen
+Nota: en caso de no cumplir, informar que parte del patrón no se cumplió.}
+program Hello;
+
+function esVocal(car:char):boolean;
+begin
+    esVocal:=((car ='a') or (car ='e') or (car ='i') or (car ='o') or (car ='u') or (car ='A') or (car ='E') or(car ='I') or(car ='O') or (car ='U'));
+end;
+
+procedure cumpleA (var cumple:boolean); //verifico si se cumple la secuencia de A -solo vocales-
+var
+    c:char;
+begin
+    writeln ('Ingrese la primer secuencia de caracteres:');
+    readln(c);
+    while ((c <>'$') and (cumple)) do begin //mientras no llegue al final de la secuencia y cumple siga en true
+        if (not esVocal(c)) then //si no es vocal cambio el valor de cumple a false
+            cumple:=false //asi cambio el valor del while y evito seguir procesando
+        else readln(c); // si era una vocal sigo leyendo...
+    end;
+end;
+
+procedure cumpleB(var cumple:boolean);
+var
+    c:char;
+begin
+    writeln ('Ingrese la segunda secuencia de caracteres:');
+    readln(c);
+    while ((c<>'#') and (cumple)) do begin
+        if (esVocal(c)) then 
+            cumple:=false
+        else readln(c);
+    end;
+end;
+var
+    car:char;
+    cumple:boolean;
+begin
+    cumple:=true;
+    cumpleA(cumple);
+    if cumple then begin//entonces se cumplió A porque cumple sigue en true
+        cumpleB (cumple);
+        if (cumple) then //se cumplió la secuencia de B porque cumple sigue en true
+            writeln('¡Se cumplió la secuencia!')
+        else writeln('¡NO se cumplió la secuencia B!');
+    end
+    else writeln('¡NO se cumplió la secuencia A!');
+end.
+
+{13. Realizar un programa modularizado que lea una secuencia de caracteres y verifique si cumple con el patrón
+A%B*, donde:
+- A es una secuencia de caracteres en la que no existe el carácter ‘$’.
+- B es una secuencia con la misma cantidad de caracteres que aparecen en A y en la que aparece a lo sumo
+3 veces el carácter ‘@’.
+- Los caracteres % y * seguro existen
+Nota: en caso de no cumplir, informar que parte del patrón no se cumplió.}
+program Hello;
+procedure cumpleA (var ok:boolean; var LongA:integer); //verifico si se ok la secuencia de A -en la que no existe el carácter ‘$’-
+var
+    c:char;
+begin
+    longA:=0;
+    writeln ('Ingrese la primer secuencia de caracteres:');
+    readln(c);
+    while ((c <>'%') and (ok)) do begin //mientras no llegue al final de la secuencia y ok siga en true
+        if (c = '$') then //si existe $ cambio el valor de ok a false
+            ok:=false //asi cambio el valor del while y evito seguir procesando
+        else begin
+            longA:=longA+1;
+            readln(c); // si no había $ sigo leyendo...
+        end;
+    end;
+end;
+
+procedure cumpleB(var ok:boolean; longA:integer);
+var
+    c:char;
+    arroba, longB:integer;
+begin
+    arroba:=0;
+    longB:=0;
+    writeln ('Ingrese la segunda secuencia de caracteres:');
+    readln(c);
+    while ((c<>'*') and (ok)) do begin
+        longB:=longB+1;
+        if (c='@') then arroba:=arroba+1;
+        if ((longB>longA) or (arroba >3)) then
+            ok:=false
+        else readln(c);
+    end;
+end;
+var
+    car:char;
+    ok:boolean;
+    longA:integer;
+begin
+    ok:=true;
+    cumpleA(ok, longA);
+    if ok then begin//entonces se cumplió A porque ok sigue en true
+        cumpleB (ok, longA);//bueno acá necesito resolver el tema de las consonantes...
+        if (ok) then //se cumplió la secuencia de B porque ok sigue en true
+            writeln('¡Se cumplió la secuencia!')
+        else writeln('¡NO se cumplió la secuencia B!');
+    end
+    else writeln('¡NO se cumplió la secuencia A!');
+end.
+
+{Realizar un módulo que calcule el rendimiento económico de una plantación de soja. El módulo debe
+recibir la cantidad de hectáreas (ha) sembradas, el tipo de zona de siembra (1: zona muy fértil, 2: zona estándar,
+3: zona árida) y el precio en U$S de la tonelada de soja; y devolver el rendimiento económico esperado de dicha
+plantación.
+Para calcular el rendimiento económico esperado debe considerar el siguiente rendimiento por tipo de zona:
+    Tipo de zona     Rendimiento por ha
+        1           6 toneladas por ha
+        2           2,6 toneladas por ha
+        3           1,4 toneladas por ha
+b. ARBA desea procesar información obtenida de imágenes satelitales de campos sembrados con soja en la
+provincia de Buenos Aires. De cada campo se lee: localidad, cantidad de hectáreas sembradas y el tipo de zona
+(1, 2 ó 3). La lectura finaliza al leer un campo de 900 ha en la localidad ‘Saladillo’, que debe procesarse. El precio
+de la soja es de U$S320 por tn. Informar:
+● La cantidad de campos de la localidad Tres de Febrero con rendimiento estimado superior a U$S 10.000.
+● La localidad del campo con mayor rendimiento económico esperado.
+● La localidad del campo con menor rendimiento económico esperado.
+● El rendimiento económico promedio.
+}
+{program Hello;
+type
+    zona = 1..3;
+Function Rendimiento (ha: integer;  tipo: tipoDeZona; precio: real): real;
+Var
+    Toneladas: real
+Begin
+   Case tipo of begin
+       1: toneladas := ha * 6;
+       2: toneladas := ha * 2.6;
+       3: toneladas := ha * 1.4;
+     Else
+          Rendimiento:= -1;
+     End;
+     Rendimiento:= toneladas * precio;
+End;
+
+procedure leerDatos(var ha:integer; var tipoDeZona:zona; var precioEnDolar:real);
+begin
+    writeln('Cantidad de hectáreas (ha) sembradas:');
+    readln(cantHectSembradas);
+    writeln('Tipo de zona:');
+    readln(tipoDeZona);
+    writeln('Precio en dolar');
+    readln(precioEnDolar);
+end;
+
+var
+    cantHectSembradas:integer;
+    tipoDeZona:zona;
+    precioEnDolar, rendEco:real;
+begin
+    leerDatos(cantHectSembradas,tipoDeZona,precioEnDolar);
+    rendEco:= rendimientoEconomico(cantHectSembradas,tipoDeZona,precioEnDolar);
+end.} //INCISO A??????? O SEA SOLO LA FUNCIÓN!!!
+program Hello;
+const
+    precioSoja = 320;
+type
+    zona = 1..3;
+    cadena30 = string [30];
+Function rendimientoEco (ha: integer; tipoDeZona:zona; precio: real): real;
+Var
+    Toneladas: real;
+Begin
+   Case tipoDeZona of
+       1: toneladas := ha * 6;
+       2: toneladas := ha * 2.6;
+       3: toneladas := ha * 1.4;
+     Else
+          rendimientoEco:= -1;
+     End;
+     rendimientoEco:= toneladas * precio;
+End;
+procedure mayorRendEsperado(rendimiento:real; var mayor:real; localidad:cadena30; var locmayor:cadena30);
+Begin
+    if(rendimiento > mayor) then Begin
+        mayor:=rendimiento;
+        locmayor:=localidad;
+    end;
+end;
+procedure menorRendEsperado(rendimiento:real; var menor:real; localidad:cadena30; var locmenor:cadena30);
+Begin
+    if(rendimiento < menor) then Begin
+        menor:=rendimiento;
+        locmenor:=localidad;
+    end;
+end;
+procedure leerDatos(var ha:integer; var tipoDeZona:zona; var localidad:cadena30);
+begin
+    writeln('Cantidad de hectáreas (ha) sembradas:');
+    readln(ha);
+    writeln('Tipo de zona:');
+    readln(tipoDeZona);
+    writeln('localidad:');
+    readln(localidad);
+end;
+var
+    cantHectSembradas,cantCampos:integer;
+    tipoDeZona:zona;
+    cant:integer;
+    rendEco,total,mayor,menor,promedio:real;
+    localidad,locmayor, locmenor: cadena30;
+begin
+    total:=0;
+    cant:=0;
+    cantCampos:=0;
+    mayor:=-1;
+    menor:=99999;
+    repeat
+    leerDatos(cantHectSembradas,tipoDeZona,localidad);
+    rendEco:= rendimientoEco(cantHectSembradas,tipoDeZona,precioSoja);
+    total:=total+rendEco;
+    cant:=cant+1;
+    if ((localidad = 'Tres de febrero') and (rendEco >10000) ) then
+        cantCampos:=cantCampos+1;
+    mayorRendEsperado(rendEco,mayor,localidad,locmayor);
+    menorRendEsperado(rendEco,menor,localidad,locmenor);
+    until ((cantHectSembradas = 900) and(localidad = 'Saladillo'));
+    promedio:=total/cant;
+writeln('La cantidad de campos de la localidad Tres de Febrero con rendimiento estimado superior a U$S 10.000 es: ',cantCampos);
+writeln('La localidad del campo con mayor rendimiento económico esperado es: ', locmayor);
+writeln('La localidad del campo con menor rendimiento económico esperado es: ',locmenor);
+writeln('El rendimiento económico promedio es: ', promedio:2:2);
+end. //REVISAR
+
+//--------------ADICIONALES----------------
+{1. Dado el siguiente programa:}
+program Ejercicio1_ad;
+procedure intercambio(var num1,num2 : integer);
+var
+    aux : integer;
+begin
+    aux := num1;//10---5
+    num1 := num2;//5---10
+    num2 := aux;//10---5
+end;
+procedure sumar(num1 : integer; var num2 : integer);
+begin
+    writeln('NUM2', num2, 'NUM1',num1);
+    num2 := num1 + num2; //num2(que en realidad es num1)= 1+5---10+1
+end;
+var
+    i, num1, num2 : integer;
+begin
+    read(num1);//leo 10----
+    read(num2);//leo 5----
+    for i := 1 to 3 do begin
+    intercambio(num1,num2);//num1:5, num2:10----
+    sumar(i,num1);//i=1 y num1:5---- i=1 y num1:10
+end;
+    writeln(num1);
+end.
+//a. ¿Qué imprime si se leen los valores num1=10 y num2=5 ? IMPRIME 9
+//b. ¿Qué imprime si se leen los valores num1=5 y num2=10 ? IMPRIME 14
+
+{2. Realice un programa modularizado que lea 10 pares de números (X,Y) e informe, para cada par de números,
+la suma y el producto de todos los números entre X e Y.
+Por ejemplo, dado el par (3,6), debe informar:
+“La suma es 18“ (obtenido de calcular 3+4+5+6)
+“El producto es 360“ (obtenido de calcular 3*4*5*6)}
+program Hello;
+const
+    fin = 10;
+procedure sumaYproducto(n1,n2:integer;var suma,prod:integer);
+var j:integer;
+begin
+    suma:=0;
+    prod:=1;
+    if (n1 < n2) then begin
+        for j:=n1 to n2 do begin
+            suma:=suma+j;
+            prod:=prod*j;
+        end;
+    end
+    else if (n1 > n2) then begin
+            for j:=n2 to n1 do begin
+                suma:=suma+j;
+                prod:=prod*j;
+            end;
+        end;
+end;
+var
+    i,num1,num2,suma,producto:integer;
+begin
+    for i:=1 to fin do begin
+        writeln('PRIMER NUMERO:');
+        readln(num1);
+        writeln('SEGUNDO NUMERO:');
+        readln(num2);
+        sumaYproducto(num1,num2,suma,producto); //o bien podrìa hacer dos funciones para calcular c/u
+        writeln('La suma es ',suma);
+        writeln('El producto es ',producto);
+    end;
+end.
+
+{3. Realizar un programa modularizado que lea información de 200 productos de un supermercado. De cada
+producto se lee código y precio (cada código es un número entre 1 y 200). Informar en pantalla:
+● Los códigos de los dos productos más baratos.
+● La cantidad de productos de más de 16 pesos con código par.}
+{Realizar un programa que lea información de 200 productos de un supermercado. De cada producto
+se lee código y precio (cada código es un número entre 1 y 200). Informar en pantalla:
+- Los códigos de los dos productos más baratos.
+- La cantidad de productos de más de 16 pesos con código par.}
+program Hello;
+type
+    rango=1..200;
+procedure masBarato (precio:real; codigo:rango; var min1,min2:real; var codbarato1,codbarato2:rango);
+begin
+    if (precio < min1) then begin
+            min2:=min1;
+            codbarato2:=codbarato1;
+            min1:=precio;
+            codbarato1:=codigo;
+        end
+        else if (precio < min2) then begin
+            min2:=precio;
+            codbarato2:=codigo;
+        end;
+end;
+var
+    i,cantidad16: integer;
+    codigo, codbarato1, codbarato2: rango;
+    precio,min1,min2: real;
+begin
+    min1:=999;
+    min2:=999;
+    cantidad16:=0;
+    for i:=1 to 6 do begin// use 6 para probar
+        writeln ('CÓDIGO:');
+        readln(codigo);
+        writeln ('PRECIO:');
+        readln(precio);
+        masBarato(precio,codigo,min1,min2,codbarato1,codbarato2);
+        if ((precio > 16) and ((codigo mod 2) = 0)) then //podria hacer una función pero no vale la pena por dos lineas...
+            cantidad16:=cantidad16 + 1;
+    end;
+    writeln ('Los códigos de los dos productos más baratos: ', codbarato1, 'y ', codbarato2);
+    writeln ('La cantidad de productos de más de 16 pesos con código par es: ',cantidad16);
+end.
+
+{4. a. Realizar un módulo que reciba como parámetro el radio de un círculo y retorne su diámetro y su
+perímetro.
+b. Utilizando el módulo anterior, realizar un programa que analice información de planetas obtenidas del
+Telescopio Espacial Kepler. De cada planeta se lee su nombre, su radio (medido en kilómetros) y la distancia
+(medida en años luz) a la Tierra. La lectura finaliza al leer un planeta con radio 0, que no debe procesarse.
+Informar:
+● Nombre y distancia de los planetas que poseen un diámetro menor o igual que el de la Tierra (12.700
+km) y mayor o igual que el de Marte (6.780 km).
+● Cantidad de planetas con un perímetro superior al del planeta Júpiter (439.264 km).}
+program Hello;
+const
+    pi = 3.14;
+    cadena25 = string[25];
+procedure leerPlaneta (var nombre, radio, distancia);
+begin
+    writeln('RADIO:');
+    readln(radio);
+    if (radio <> 0) then begin
+        writeln('NOMBRE:');
+        readln(nombre);
+        writeln('DISTANCIA A LA TIERRA:');
+        readln(distancia);
+    end;
+end;
+procedure diametroYperimetro (rad:real; var diam,per:real);
+begin
+    diam:=rad*rad;
+    per:=pi*diam;
+end;
+var
+    radio,diametro,perimetro:real;
+    nombre:cadena25;
+begin
+    cantSupJupiter:= 0;
+    leerPlaneta(nombre,radio, distancia);
+    diametroYperimetro(radio,diametro,perimetro);
+end.
+
+{5. 5. En la “Práctica 1 - Ejercicios Adicionales” se resolvieron 3 problemas complejos sin utilizar módulos. Al
+carecer de herramientas para modularizar, esos programas resultaban difíciles de leer, de extender y de
+depurar.
+a) Analice sus soluciones a dichos problemas, e identifique:
+- qué porciones de su código podrían modularizarse? en qué casos propondría una estructura de módulos
+anidada?
+- qué tipo de módulo (función o procedimiento) conviene utilizar en cada caso? existe algún caso en los que
+sólo un tipo de módulo es posible?
+- qué mecanismos de comunicación conviene utilizar entre los módulos propuestos?
+b) Implemente nuevamente los 3 programas, teniendo en cuenta los módulos propuestos en el inciso anterior}
+program Hello;
+begin
+  writeln ('Hello World')
+end.
+
