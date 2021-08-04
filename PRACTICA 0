@@ -1,0 +1,130 @@
+{1. Implemente un programa que lea por teclado dos números enteros e imprima en pantalla los
+valores leídos en orden inverso. Por ejemplo, si se ingresan los números 4 y 8, debe mostrar el
+mensaje: Se ingresaron los valores 8 y 4}
+program Hello;
+var
+    num1, num2: integer;
+begin
+    writeln('Se ingresa el primer número:');
+    readln(num1);
+    writeln('Se ingresa el segundo número:');
+    readln(num2);
+    writeln('Se ingresaron los valores:',num2,'y',num1);    
+end.
+
+{2. Modifique el programa anterior para que el mensaje de salida muestre la suma de ambos
+números:
+a. Utilizando una variable adicional
+b. Sin utilizar una variable adicional}
+{program Hello;
+var
+    num1, num2, suma: integer;
+begin
+    suma:=0; //a que no necesariamente debia inicializar en 0
+    writeln('Se ingresa el primer número:');
+    readln(num1);
+    writeln('Se ingresa el segundo número:');
+    readln(num2);
+    suma:=num1+num2;
+    writeln('La suma de ambos valores es:',suma);    
+end.
+b. Sin utilizar una variable adicional}
+program Hello;
+var
+    num1, num2: integer;
+begin
+    writeln('Se ingresa el primer número:');
+    readln(num1);
+    writeln('Se ingresa el segundo número:');
+    readln(num2);
+    num1:=num1+num2;
+    writeln('La suma de ambos valores es:',num1);    
+end.
+
+{3. Implemente un programa que lea dos números reales e imprima el resultado de la división de
+los mismos con una precisión de dos decimales. Por ejemplo, si se ingresan los valores 4,5 y 7,2,
+debe imprimir: El resultado de dividir 4,5 por 7,2 es 0,62.
+//VER TEMA DE LOS NÚMEROS CON COMA
+Recuerde que para imprimir en pantalla números reales puede utilizar la notación:
+writeln(X:Y:Z) donde X es el número a imprimir, Y es el ancho (en cantidad de caracteres) que
+debe ocupar la impresión, y Z es la cantidad de decimales. Por ejemplo, sea el número
+pi=3.141592654 :
+3.14 => writeln(pi,1,2)}
+program Hello;
+var
+    num1, num2, resultado:real;
+begin
+    writeln('Se ingresa el primer número:');
+    readln(num1);
+    writeln('Se ingresa el segundo número:');
+    readln(num2);
+    resultado:= num1 / num2;
+    writeln('El resultado de dividir', num1 ,'por', num2 ,'es', resultado:2:2);
+end.
+
+{4. Implemente un programa que lea el diámetro D de un círculo e imprima:
+a. El radio (R) del círculo (la mitad del diámetro)
+b. El área del círculo. Para calcular el área de un círculo debe utilizar la fórmula PI x R
+2
+c. El perímetro del círculo. Para calcular el perímetro del círculo debe utilizar la fórmula
+D*PI (o también PI*R*2)}
+program Hello;
+const
+    pi= 3.14;
+var
+    diam,radio, area, per:real;
+begin
+  writeln ('Ingrese el diámetro:');
+  readln(diam);
+  radio:=diam/2;
+  area:= pi* (radio*radio);
+  per:=diam*pi;
+  writeln ('RADIO:',radio, 'AREA:',area,'PERIMETRO:',per);
+end.
+
+{5. Un kiosquero debe vender una cantidad X de caramelos entre Y clientes, dividiendo
+cantidades iguales entre todos los clientes. Los que le sobren se los quedará para él.
+a. Realice un programa que lea la cantidad de caramelos que posee el kiosquero (X),
+la cantidad de clientes (Y), e imprima en pantalla un mensaje informando la
+cantidad de caramelos que le corresponderá a cada cliente, y la cantidad de
+caramelos que se quedará para sí mismo.
+b. Imprima en pantalla el dinero que deberá cobrar el kiosquero si cada caramelo
+tiene un valor de $1.60,}
+program Hello;
+const
+    valor= 1.60;
+var
+    X,Y,reparte,se_queda:integer;
+    costo:real;
+begin
+  writeln ('Cantidad de caramelos:');
+  readln(X);
+  writeln ('Cantidad de clientes:');
+  readln(Y);
+  reparte:= X div Y;
+  se_queda:= X mod Y;
+  costo:= reparte * valor;
+   writeln ('El kiosquero reparte:', reparte, ' y se queda con:', se_queda);
+   writeln ('Debe cobrar:', costo);
+end.
+
+{6- Realice un programa que informe el valor total en pesos de una transacción en dólares.
+Para ello, el programa debe leer el monto total en dólares de la transacción, el valor del
+dólar al día de la fecha y el porcentaje (en pesos) de la comisión que cobra el banco por la
+transacción. Por ejemplo, si la transacción se realiza por 10 dólares, el dólar tiene un valor
+20,54 pesos y el banco cobra un 4% de comisión, entonces el programa deberá informar:
+La transacción será de 213,61 pesos argentinos
+(resultado de multiplicar 10*20,54 y adicionarle el 4%)}
+program Hello;
+var
+    x,monto,valor_dolar,total:real;
+begin
+    total:=0;
+    writeln('Valor del dolar al dia de la fecha:');
+    readln(valor_dolar);
+    readln(monto);
+    total:=  monto * valor_dolar;
+    total:= x + 0.04*x;
+    writeln('La transacción será de',total,'','pesos argentinos');
+end.
+
