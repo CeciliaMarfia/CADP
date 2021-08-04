@@ -1,0 +1,954 @@
+{1. Dado el siguiente programa: 
+    a. Completar el programa principal para que lea información de alumnos (código, nombre, promedio) e informe
+la cantidad de alumnos leídos. La lectura finaliza cuando ingresa un alumno con código 0, que no debe
+procesarse. Nota: utilizar el módulo leer.
+    b)Modificar al programa anterior para que, al finalizar la lectura de todos los alumnos, se informe también el
+nombre del alumno con mejor promedio.
+
+}
+
+program Registros;
+type
+    str20 = string[20];
+    alumno = record
+        codigo : integer;
+        nombre : str20;
+        promedio : real;
+    end;
+procedure mejorPromedio (prom:real; nom:str20; var promMayor:real; var nombreMayor:str20);
+
+begin    
+    if(prom > promMayor) then begin
+        promMayor:=prom;
+        nombreMayor:=nom;
+    end;
+end;
+procedure leer(var alu : alumno);
+begin
+    writeln('Ingrese el código del alumno');
+    readln(alu.codigo);
+    if (alu.codigo <> 0) then begin
+        writeln('Ingrese el nombre del alumno'); 
+        readln(alu.nombre);
+        writeln('Ingrese el promedio del alumno'); 
+        readln(alu.promedio);
+    end;
+end;
+{ declaración de variables del programa principal }
+var
+    a : alumno;
+    cantAlu:integer;
+    nombreMayor:str20;
+    promMayor:real;
+{ cuerpo del programa principal }
+begin
+    promMayor:=-1;
+    cantAlu:= 0;
+    leer(a);
+    while (a.codigo <> 0) do begin
+        cantAlu:= cantAlu + 1;
+        mejorPromedio(a.promedio, a.nombre,promMayor,nombreMayor);
+        leer(a);
+    end;
+    writeln('Cantidad de alumnos leidos: ',cantAlu);
+    writeln('Nombre del alumno con mejor promedio: ',nombreMayor);
+end.
+
+{2. El registro civil de La Plata ha solicitado un programa para analizar la distribución de casamientos durante el año
+2019. Para ello, cuenta con información de las fechas de todos los casamientos realizados durante ese año.
+a) Analizar y definir un tipo de dato adecuado para almacenar la información de la fecha de cada casamiento.
+b) Implementar un módulo que lea una fecha desde teclado y la retorne en un parámetro cuyo tipo es el definido
+en el inciso a).
+c) Implementar un programa que lea la fecha de todos los casamientos realizados en 2019. La lectura finaliza al
+ingresar el año 2020, que no debe procesarse, e informe la cantidad de casamientos realizados durante los meses
+de verano (enero, febrero y marzo) y la cantidad de casamientos realizados en los primeros 10 días de
+cada mes. Nota: utilizar el módulo realizado en b) para la lectura de fecha}
+program Hello;
+type
+    subrangodia = 1..31; //puedo poner el subrango sin declararlo...? o sea al lado SI, PUEDO
+    subrangomes = 1..12;
+    subrangoanio= 2019..2020;
+    fecha = record
+        dia:subrangodia;
+        mes:subrangomes;
+        anio:subrangoanio;
+    end;
+function mesDeVerano(mes: subrangomes):boolean;
+begin
+    mesDeVerano:= (mes = 1 ) or (mes = 2 ) or (mes = 3);
+end;
+function diezDias(dia: subrangodia):boolean;
+begin
+    diezDias:= (dia >= 1) and (dia<= 10);
+end;
+procedure leerFecha (var f:fecha);
+begin
+    writeln('Ingrese el anio de casamiento:');
+    readln(f.anio);
+    if (f.anio <> 2020) then begin
+        writeln('Ingrese el día del casamiento:');
+        readln(f.dia);
+        writeln('Ingrese el mes de casamiento:');
+        readln(f.mes);
+    end;
+end;
+var
+    fec:fecha;
+    casamientoVerano,primerosDiez:integer;
+begin
+    casamientoVerano:= 0;
+    primerosDiez:= 0;
+    leerFecha(fec);
+    while (fec.anio <> 2020) do begin
+        if mesDeVerano (fec.mes) then
+            casamientoVerano:= casamientoVerano+1;
+        if diezDias(fec.dia) then
+            primerosDiez:=primerosDiez+1;
+    leerFecha(fec);
+    end;
+    writeln('Cantidad de casamientos realizados durante los meses de verano: ', casamientoVerano);
+    writeln('Cantidad de casamientos realizados en los primeros 10 días de cada mes:', primerosDiez);
+end.
+
+{3 - El Ministerio de Educación desea realizar un relevamiento de las 2400 escuelas primarias de la provincia de Bs. As,
+con el objetivo de evaluar si se cumple la proporción de alumnos por docente calculada por la UNESCO para el año
+2015 (1 docente cada 23,435 alumnos). Para ello, se cuenta con información de: CUE (código único de
+establecimiento), nombre del establecimiento, cantidad de docentes, cantidad de alumnos, localidad. Se pide
+implementar un programa que procese la información y determine:
+● Cantidad de escuelas de La Plata con una relación de alumnos por docente superior a la sugerida por UNESCO.
+● CUE y nombre de las dos escuelas con mejor relación entre docentes y alumnos.
+El programa debe utilizar:
+a) Un módulo para la lectura de la información de la escuela.
+b) Un módulo para determinar la relación docente-alumno (esa relación se obtiene del cociente entre la cantidad
+de alumnos y la cantidad de docentes)}
+program Hello;
+const
+    relevamiento = 3; //2400 uso 3 para probar
+    propUNESCO = 1 / 23.435;  // ~0.04267
+type
+    cadena50 = string[50];
+    establecimiento = record
+        cue:integer;
+        nom:cadena50;
+        cantDoc:integer;
+        cantAlu:integer;
+        localidad:cadena50;
+    end;
+function cumple (localidad:cadena50; relacion:real):integer;
+begin
+    if (localidad = 'La Plata') and (relacion > propUNESCO )then
+        cumple:=1
+    else
+        cumple:=0;
+end;
+procedure escMejorRelacion(cueAct:integer;nombreAct: cadena50; relacion:real; var mejorRelac1,mejorRelac2:real; var cue1,cue2:integer; var nom1,nom2:cadena50);
+begin
+    if (relacion > mejorRelac1) then begin
+        mejorRelac2:=mejorRelac1;
+        cue2:=cue1;
+        nom2:=nom1;
+        mejorRelac1:=relacion;
+        cue1:=cueAct;
+        nom1:=nombreAct;
+    end
+    else
+    if (relacion> mejorRelac2) then begin
+        mejorRelac2:= relacion;
+        cue2:=cueAct;
+        nom2:=nombreAct;
+    end;
+end;
+function relacDocAlu (cDocentes:integer; cAlumnos:integer):real;
+begin
+    relacDocAlu:= cDocentes / cAlumnos;
+end;
+procedure leerEstablecimiento (var e:establecimiento);
+begin
+    with e do begin
+        writeln('CUE:');
+        readln(cue);
+        writeln('NOMBRE DEL ESTABLECIMIENTO:');
+        readln(nom);
+        writeln('CANTIDAD DE DOCENTES:');
+        readln(cantDoc);
+        writeln('CANTIDAD DE ALUMNOS:');
+        readln(cantAlu);
+        writeln('LOCALIDAD:');
+        readln(localidad);
+    end;
+end;
+var    
+    est: establecimiento;
+    i,cantEsc,cue1,cue2: integer;
+    relacion, mejorRelac1, mejorRelac2: real;
+    nom1,nom2:cadena50;
+begin
+    cantEsc:=0;
+    mejorRelac1:=-1;
+    mejorRelac2:=-1;
+    for i:=1 to relevamiento do begin
+        leerEstablecimiento(est);
+        relacion:=relacDocAlu(est.cantDoc,est.cantAlu);
+        cantEsc:=cantEsc+cumple(est.localidad, relacion);
+        escMejorRelacion(est.cue, est.nom, relacion, mejorRelac1,mejorRelac2,cue1,cue2,nom1,nom2);
+    end;
+    writeln('Cantidad de escuelas de La Plata con relación de alumnos por docente superior a la sugerida por UNESCO: ',cantEsc);
+    writeln('CUE y nombre de las dos escuelas con mejor relación entre docentes y alumnos: ',cue1,' de nombre ',nom1, ' y ', cue2, ' de nombre ',nom2);
+end.
+
+{4-Una compañía de telefonía celular debe realizar la facturación mensual de sus 9300 clientes con planes de
+consumo ilimitados (clientes que pagan por lo que consumen). Para cada cliente se conoce su código de cliente y
+cantidad de líneas a su nombre. De cada línea se tiene el número de teléfono, la cantidad de minutos consumidos
+y la cantidad de MB consumidos en el mes. Se pide implementar un programa que lea los datos de los clientes de
+la compañía e informe el monto total a facturar para cada uno. Para ello, se requiere:
+a. Realizar un módulo que lea la información de una línea de teléfono.
+b. Realizar un módulo que reciba los datos de un cliente, lea la información de todas sus líneas (utilizando el
+módulo desarrollado en el inciso a. ) y retorne la cantidad total de minutos y la cantidad total de MB a facturar
+del cliente.
+Nota: para realizar los cálculos tener en cuenta que cada minuto cuesta $3,40 y cada MB consumido cuesta $1,35.}
+program Hello;
+const
+    cantCli = 3; // 9300 uso 3 para probar
+    precioMin = 3.40;
+    precioMB = 13.35;
+type
+    linea = record
+        numTel:integer;
+        cantMinCons:real;
+        cantMBcons:real;
+    end;
+    
+    cliente = record
+        cod:integer;
+        cantLineas:integer;
+    end;
+procedure leerLinea(var l:linea);
+begin
+    writeln('NUMERO DE TELEFONO:');
+    readln(l.numTel);
+    writeln('MINUTOS CONSUMIDOS:');
+    readln(l.cantMinCons);
+    writeln('MB CONSUMIDOS:');
+    readln(l.cantMBcons);
+end;
+procedure procesarCliente (var c:cliente; var totalMinutos,totalMB:real);
+var li:linea; i:integer;
+begin
+    totalMinutos:=0;
+    totalMB:=0;
+    //-----------modularizar lectura
+    writeln('CODIGO DEL CLIENTE:'); // lee la info del cliente
+    readln(c.cod);
+    writeln('CANTIDAD DE LINEAS:');
+    readln(c.cantLineas);
+    for i:= 1 to c.cantLineas do begin //lee la info de todas las lineas del cliente
+        leerLinea(li);
+        //pueden ser 2 funciones o un procedure
+        totalMinutos:= totalMinutos + li.cantMinCons; // va contando la cant de mins consumidos entre todas las lineas del cliente
+        totalMB:= totalMB +li.cantMBcons;//va contando la cant de mins consumidos entre todas las lineas del cliente
+    end;
+end;
+    
+var
+    cli:cliente;
+    i:integer;
+    totalMinutos,totalMB, montoFactura: real;
+begin
+    for i:= 1 to cantCli do begin
+        leerCliente(cli);
+        ProcesarCliente (cli,totalMinutos,totalMB);
+        precioTotalMin:= totalMinutos *precioMin; //hacer funcion
+        precioTotalMB:= totalMB *precioMB;// idem
+        
+        montoFactura:= precioTotalMin + precioTotalMB;
+        writeln('Para el cliente ', i, ' el monto a facturar es: $ ',montoFactura:4:2);
+    end;
+end.
+//ESTE DE LOS AUTOS ES DE CORTE DE CONTROL Y ESTÁ BÁRBARO PARA ENTENDER CÓMO FUNCIONA CDC (Corte de control)
+{5-Realizar un programa que lea información de autos que están a la venta en una concesionaria. De cada auto se lee:
+marca, modelo y precio. La lectura finaliza cuando se ingresa la marca “ZZZ” que no debe procesarse. La
+información se ingresa ordenada por marca. Se pide calcular e informar:
+a. El precio promedio por marca.
+b. Marca y modelo del auto más caro.}
+program Hello;
+type
+    cadena30 = string[30];
+    auto = record
+        marca: cadena30;
+        modelo: cadena30;
+        precio: real;
+    end;
+procedure masCaro(a:auto; var precioCaro: real; var marcaCara,modeloCaro:cadena30);
+begin
+    if (a.precio > precioCaro) then begin
+        precioCaro:= a.precio;
+        marcaCara:=a.marca;
+        modeloCaro:=a.modelo;
+    end;
+end;
+procedure leerAuto(var a:auto);
+begin
+    writeln('MARCA:');
+    readln(a.marca);
+    if (a.marca <> 'ZZZ') then begin
+        writeln('MODELO:');
+        readln(a.modelo);
+        writeln('PRECIO');
+        readln(a.precio);
+    end;
+end;
+var
+    a:auto;
+    cantAutos:integer;
+    marcaActual,modeloCaro,marcaCara:cadena30;
+    sumaPrecios,precioProm,precioCaro:real;
+begin
+    precioCaro:=-1;
+    leerAuto(a);
+    while (a.marca <> 'ZZZ') do begin begin // while pcpal, analiza la condición de lectura, UN AUTO DE DIFERENTE MARCA
+        marcaActual:= a.marca; // asigno la MARCA ACTUAL que estoy analizando
+        cantAutos:=0; //inicializo la variable que suma la cantidad de autos para la marca actual
+        sumaPrecios:=0; //inicializo la variable que suma los precios para la marca actual
+        precioProm:=0; //inicializo la variable de promedio para la marca actual
+            while (a.marca <> 'ZZZ') and (marcaActual = a.marca) do begin // chequea si llegué al cdc o si llegué a cambiar de marca
+                cantAutos:=cantAutos+1; //ingreso un auto paraa esta marca
+                sumaPrecios:=sumaPrecios+a.precio; //agrego su precio de la misma marca
+                masCaro(a,precioCaro,marcaCara,modeloCaro);
+                leerAuto(a);
+            end;
+            //SALGO DEL WHILE PORQUE CAMBIO LA MARCA o LLEGUÉ AL CDC
+        precioProm:= sumaPrecios / cantAutos;
+        writeln('El precio promedio de la marca', marcaActual,'es: $ ',precioProm:4:2);
+    end;
+    //IMPRIMO COSAS DE TODAS LAS MARCAS JUNTAS
+    writeln(' Marca y modelo del auto más caro: ', marcaCara,' ' ,modeloCaro);
+end;
+end.
+// lo tengo terminado en mi carpeta, a mano
+{6- Una empresa importadora de microprocesadores desea implementar un sistema de software para analizar la
+información de los productos que mantiene actualmente en stock. Para ello, se conoce la siguiente información de
+los microprocesadores: marca (Intel, AMD, NVidia, etc), línea (Xeon, Core i7, Opteron, Atom, Centrino, etc.),
+cantidad de cores o núcleos de procesamiento (1, 2, 4, 8), velocidad del reloj (medida en Ghz) y tamaño en
+nanómetros (nm) de los transistores (14, 22, 32, 45, etc.). La información de los microprocesadores se lee de
+forma consecutiva por marca de procesador y la lectura finaliza al ingresar un procesador con 0 cores (que no
+debe procesarse). Se pide implementar un programa que lea información de los microprocesadores de la empresa
+importadora e informe:
+Marca y línea de todos los procesadores de más de 2 cores con transistores de a lo sumo 22 nm.
+● Las dos marcas con mayor cantidad de procesadores con transistores de 14 nm.
+● Cantidad de procesadores multicore (de más de un core) de Intel o AMD, cuyos relojes alcancen velocidades de
+al menos 2 Ghz.}
+program Hello;
+type
+    cadena10 = string [10];
+    microprocesador = record
+        marca:cadena10;
+        linea:cadena10;
+        cantCores:integer;
+        velocReloj:real;
+        tamTransist:integer;
+    end;
+function (cores,tamaniotrans:integer):integer;
+begin
+    if (cores > 2) and (tamaniotransamTransist <= 22)  then
+        coresytrans22:=1
+    else
+        coresytrans22:=0;
+end;
+procedure leerMicroprocesador(var mp:microprocesador);
+begin
+    with mp do begin
+        writeln('CANTIDAD DE CORES:');
+        readln(cantCores);
+        if (cantCores <> 0) then begin
+            writeln('MARCA:');
+            readln(marca);
+            writeln('LINEA:');
+            readln(linea);
+            writeln('VELOCIDAD DEL RELOJ:');
+            readln(velocReloj);
+            writeln('TAMANIO DE LOS TRANSISTORES:');
+            readln(tamTransist);
+        end;
+    end;
+end;
+var
+    microp: microprocesador;
+    marcaActual,marca2cores,linea22: cadena10;
+    ,cant14: integer;
+begin
+    masDe2Cores:=0;
+    leerMicroprocesador(microp);
+    while (microp.cantCores <> 0) do begin
+        marcaActual:=microp.marca;
+        cant14:=0
+        while(microp.cantCores <> 0) and  (marcaActual= microp.marca) do begin
+           if (masDe2y22  microp.marca+ ; //a lo sumo es menor o igual
+        leerMicroprocesador(microp);
+        end;
+    end;
+end.
+Marca y línea de todos los procesadores de más de 2 cores con transistores de a lo sumo 22 nm.
+
+Las dos marcas con mayor cantidad de procesadores con transistores de 14 nm.
+
+Cantidad de procesadores multicore (de más de un core) de Intel o AMD, cuyos relojes alcancen velocidades de
+al menos 2 Ghz.
+
+{7-Realizar un programa que lea información de centros de investigación de Universidades Nacionales. De cada
+centro se lee su nombre abreviado (ej. LIDI, LIFIA, LINTI), la universidad a la que pertenece, la cantidad de
+investigadores y la cantidad de becarios que poseen. La información se lee de forma consecutiva por universidad y
+la lectura finaliza al leer un centro con 0 investigadores, que no debe procesarse. Informar:
+● Cantidad total de centros para cada universidad.
+● Universidad con mayor cantidad de investigadores en sus centros.
+● Los dos centros con menor cantidad de becarios.}
+program Hello;
+type
+    cadena10 = string[10];
+    cadena30 = string[30];
+    centro = record
+        nombre:cadena10;
+        univeper:cadena30;
+        cantInv:integer;
+        cantBec:integer;
+    end;
+procedure menorCantBec(centroActual:cadena10; cantBecAct:integer; var menorBec1,menorBec2:integer; var centro1,centro2:cadena10);
+begin
+    if (cantBecAct < menorBec1) then begin
+        menorBec2:=menorBec1;
+        centro2:=centro1;
+        menorBec1:=cantBecAct;
+        centro1:=centroActual;
+    end
+    else if (cantBecAct < menorBec2) then begin
+            menorBec2:=cantBecAct;
+            centro2:=centroActual;
+            
+        end;
+end;
+procedure mayorInvestigadores(cantInv:integer; uniactual:cadena30; var maycantinv:integer; var univMayor:cadena30);
+begin
+    if (cantInv > maycantinv) then begin
+        maycantinv:=cantInv;
+        univMayor:=uniactual;
+    end;
+end;
+procedure leerCentro (var c:centro);
+begin
+    with c do begin
+        writeln('CANTIDAD DE INVESTIGADORES:');
+        readln(cantInv);
+        if (cantInv <> 0) then begin
+        writeln('NOMBRE DEL CENTRO:');
+        readln(nombre);
+        writeln('UNIVERSIDAD A LA QUE PERTENECE:'); 
+        readln(univeper);
+        writeln('CANTIDAD DE BECARIOS:');
+        readln(cantBec);
+        end;
+    end;
+end;
+var
+    cen:centro;
+    totalCentros,totalInvest,maycantinv,menorBec1,menorBec2:integer;
+    centro1,centro2:cadena10;
+    univActual,univMayor:cadena30;
+begin
+    maycantinv:=-1;
+    menorBec1:=999;
+    menorBec2:=999;
+    leerCentro(cen);
+    while(cen.cantInv <> 0) do begin
+        univActual:= cen.univeper;
+        totalCentros:=0;
+        totalInvest:=0;
+        while (cen.cantInv <> 0) and (univActual= cen.univeper) do begin
+        totalCentros:=totalCentros+1;
+        totalInvest:=totalInvest+cen.cantInv;
+        menorCantBec(cen.nombre,cen.cantBec, menorBec1,menorBec2,centro1,centro2);
+        leerCentro(cen);
+        end;//salgo del while porque CAMBIO DE UNIVERSIDAD
+        writeln('Cantidad total de centros para cada universidad: ', totalCentros); 
+        mayorInvestigadores(totalInvest,univActual,maycantinv,univMayor); //va afuera porque sino lo llamo constantemente
+    //IMPRIMO COSAS DE TODOS LOS CENTROS
+    end;
+    writeln('Universidad con mayor cantidad de investigadores en sus centros: ', univMayor);
+    writeln('Los dos centros con menor cantidad de becarios: ', centro1 ,' y ', centro2);
+end.
+
+{8 - La Comisión Provincial por la Memoria desea analizar la información de los proyectos presentados en el programa
+Jóvenes y Memoria durante la convocatoria 2020. Cada proyecto posee un código único, un título, el docente
+coordinador (DNI, nombre y apellido, email), la cantidad de alumnos que participan del proyecto, el nombre de la
+escuela y la localidad a la que pertenecen. Cada escuela puede presentar más de un proyecto. La información se
+ingresa ordenada consecutivamente por localidad y, para cada localidad, por escuela. Realizar un programa que
+lea la información de los proyectos hasta que se ingrese el proyecto con código -1 (que no debe procesarse), e
+informe:
+● Cantidad total de escuelas que participan en la convocatoria 2018 y cantidad de escuelas por cada localidad.
+● Nombres de las dos escuelas con mayor cantidad de alumnos participantes.
+● Título de los proyectos de la localidad de Daireaux cuyo código posee igual cantidad de dígitos pares e impares.}
+program Hello;
+const
+    fin = -1;
+type
+    cadena30 = string[30];
+    docente =record
+        dni:integer;
+        nomyape:cadena30;
+        email:cadena30;
+    end;
+    
+    proyecto = record
+        codigo:integer;
+        titulo:cadena30;
+        coordinador: docente;
+        cantAlu:integer;
+        nomEscu:cadena30;
+        localidad:cadena30;
+    end;
+Procedure LeerDocente(var d:docente);
+begin
+    with d do begin
+        writeln('DNI DEL DOCENTE:');
+        readln(dni);
+        writeln('NOMBRE Y APELLIDO DEL DOCENTE:');
+        Readln(nomyape);
+        writeln('EMAIL DEL DOCENTE:');
+        readln(email);
+    end;
+end;
+Procedure Leer(var p:proyecto);
+var
+d:docente;
+begin
+    with p do begin
+        writeln('CODIGO DEL PROYECTO:');
+        readln(codigo);
+        If(codigo <> fin)then begin
+             writeln('TITULO DEL PROYECTO:');
+             readln(titulo);
+             writeln('DATOS DEL DOCENTE COORDINADOR:'); //hago un módulo para la lectura del docente
+             LeerDocente(d);
+             writeln('CANTIDAD DE ALUMNOS:');
+             readln(cantAlu);
+             writeln('NOMBRE DEL COLEGIO:');
+             readln(nomEscu);
+             writeln('LOCALIDAD:');
+             readln(localidad);
+         end;
+    end;
+end;
+Function Iguales(codigo:integer):boolean;
+var
+    dig, par, impar:integer;
+begin
+    par:=0;
+    impar:=0;
+    While( codigo <> 0)do begin
+     dig:=codigo mod 10;
+     If((dig mod 2) = 0)then
+       par:= par + 1
+     else
+       impar:= impar + 1;
+     codigo:=codigo div 10;
+    end;
+    Iguales:=(par=impar);
+end;
+Procedure maxAlumnos(var max1,max2:integer; var esc1,esc2:cadena30 ;alumnos:integer; escuela:cadena30);
+begin
+    If(alumnos > max1)then begin
+      max2:=max1;
+      max1:=alumnos;
+      esc2:=esc1;
+      esc1:=escuela;
+     end
+    else
+     if(alumnos > max2)then begin
+        max2:=alumnos;
+        esc2:=escuela;
+     end;
+end;
+var
+    proy:proyecto;
+    locActu,escAct,esc1,esc2:cadena30;
+    contEsc,cantEscLoc, max1,max2,cant :integer;
+begin
+    contEsc:=0;
+    max1:=-1;
+    max2:=-1;
+    Leer(proy);
+    While(proy.codigo <> fin)do begin
+     locActu:=proy.localidad;
+     contEsc:=contEsc+1;
+     cantEscLoc:=0;
+     While(proy.codigo <> fin) and (locActu = proy.localidad)do begin
+           escAct:=proy.nomEscu; //indico la escuela actual
+           cantEscLoc:=cantEscLoc+1;
+           cant:=0;
+           If(proy.localidad='Daireaux') then begin
+             If(Iguales(proy.codigo)) then 
+                writeln('el titulo de este proyecto es', proy.titulo);
+             While(proy.codigo<> fin) and (locActu=proy.localidad) and (escAct=proy.nomEscu)do begin
+                cant:= cant + proy.cantAlu;
+                Leer(proy);
+             end;
+             maxAlumnos(max1,max2,esc1,esc2,cant,proy.nomEscu);
+            end;
+     end;
+           writeln('Para la localidad ',locActu, 'la cantidad de escuelas es de', cantEscLoc);
+    end;
+    writeln('Las dos escuelas con mas cantidad de alumnos son ',  esc1 ,' con',  max1, 'alumnos, y',  esc2 ,'con',  max2, 'alumnos');
+    writeln('La cantidad de escuelas totales que participaron es de ', contEsc);
+end.
+
+//--------------ADICIONALES---------------------
+{9. Realizar un programa que lea información de los candidatos ganadores de las últimas elecciones a intendente de
+la provincia de Buenos Aires. Para cada candidato se lee: localidad, apellido del candidato, cantidad de votos
+obtenidos y cantidad de votantes de la localidad. La lectura finaliza al leer la localidad ‘Zárate’, que debe procesarse.
+Informar:
+● El intendente que obtuvo la mayor cantidad de votos en la elección.
+● El intendente que obtuvo el mayor porcentaje de votos de la elección.}
+program Hello;
+type
+    cadena10 = string[10];
+    candidato = record
+        localidad:cadena10;
+        apellido:cadena10;
+        cantVotos:integer;
+        votantesxloc:integer;
+    end;
+procedure mayorPorcentaje (porcActual:real; var mayorPorcentaje:real; apellido:cadena10; var nomporcentaje:cadena10);
+begin
+    if (porcActual> mayorPorcentaje) then
+        mayorPorcentaje:=porcActual;
+        nomporcentaje:=apellido;
+end;
+function calcularporcentaje(cantVotosAct, totalVotos:integer):real;
+begin
+    calcularporcentaje:=(cantVotosAct/TotalVotos)*100;
+end;
+procedure masVotado(votosActual:integer; candidatoActual:cadena10; var maxVotos:integer; var  intendentemayor:cadena10);
+begin
+    if (votosActual > maxVotos) then begin
+        maxVotos:=votosActual;
+        intendentemayor:= candidatoActual;
+    end;
+end;
+procedure leerCandidato (var c:candidato);
+begin
+    with c do begin
+        writeln('LOCALIDAD:');
+        readln(localidad);
+        writeln('APELLIDO:');
+        readln(apellido);
+        writeln('CANTIDAD DE VOTOS:');
+        readln(cantVotos);
+        writeln('VOTANTES DE ',localidad);
+        readln(votantesxloc);
+    end;
+end;
+var
+    cand:candidato;
+    intendentemayor, nomporcentaje:cadena10;
+    maxVotos,cantTotalVotos:integer;
+    porcentaje, maxPorcentaje:real;
+begin
+    maxVotos:=-1;
+    cantTotalVotos:=0;
+    maxPorcentaje:=-1;
+    repeat
+        leerCandidato(cand);
+        cantTotalVotos:=cantTotalVotos+cand.cantVotos;
+        masVotado(cand.cantVotos, cand.apellido, maxVotos, intendentemayor);
+        porcentaje:= calcularporcentaje(cand.cantVotos,cantTotalVotos);
+        mayorPorcentaje (porcentaje,maxPorcentaje,cand.apellido, nomporcentaje);
+    until (cand.localidad = 'ZARATE');
+    writeln('El intendente' , intendentemayor,' obtuvo la mayor cantidad de votos en la elección.');
+    writeln('El intendente', nomporcentaje,' obtuvo el mayor porcentaje de votos de la elección,');
+end. // REVISAR LO DEL PORCENTAJE
+
+{10. Un centro de investigación de la UNLP está organizando la información de las 320 especies de planta con las
+que trabajan. Para cada especie se ingresa su nombre científico, tiempo promedio de vida (en meses), tipo de
+planta (por ej. árbol, conífera, arbusto, helecho, musgo, etc.), clima (templado, continental, subtropical, desértico,
+etc.) y países en el mundo donde se las encuentra. La información de las planta se ingresa ordenada por tipo de
+planta y, para cada planta, la lectura de países donde se las encuentra finaliza al ingresar el país 'zzz'. Al finalizar la
+lectura, informar:
+● El tipo de planta con menor cantidad de planta.
+● El tiempo promedio de vida de las planta de cada tipo.
+● El nombre científico de las dos planta más longevas.
+● Los nombres de las planta nativas de Argentina que se encuentran en regiones con clima subtropical.
+● El nombre de la planta que se encuentra en más países.
+}
+program ejer;
+type
+	string20=string[20];
+	meses=1..12;
+
+	planta=record
+		nombre_cien:string20;
+		prome_vida:meses;
+		tipo_planta:string20;
+		clima:string20;
+		paises:string20;
+	end;
+
+procedure carga(var p:planta);
+	begin
+		write('Ingrese el paise donde se las encuentra, su nombre cientifico,');
+		writeln(' tiempo promedio de vida (en meses), tipo de planta y clima');
+		readln(p.paises);
+		if (p.paises <> 'zzz') then begin
+			readln(p.nombre_cien);
+			readln(p.prome_vida);
+			readln(p.tipo_planta);
+			readln(p.clima);
+		end;	
+	end;
+
+	procedure menor_tipo(tipo_planta:string20; cant_tipo:integer; var min_nombre:string20; var minimo:integer);
+		begin
+			if (cant_tipo < minimo) then begin
+				minimo:=cant_tipo;
+				min_nombre:=tipo_planta;
+			end;
+		end;
+
+	function vida_promedio(cant_vida:integer; cant_tipo:integer):real;
+		begin
+			vida_promedio:=cant_vida/cant_tipo;
+		end;
+
+	procedure maximo(nombre_cien:string20; prome_vida:integer; var max1, max2:integer; var nom1, nom2:string20);	
+		begin
+			if (prome_vida > max1) then begin
+				max2:=max1;
+				nom2:=nom1;
+				max1:=prome_vida;
+				nom1:=nombre_cien;
+			end
+			else if (prome_vida > max2) then begin
+				max2:=prome_vida;
+				nom2:=nombre_cien;
+			end;
+		end;
+
+	function planta_argentina(paises, clima:string20):boolean;
+		begin
+			planta_argentina:=((paises = 'argentina') and (clima = 'subtropical'));
+		end;
+
+	procedure cant_paises(nombre_cien:string20; var cant_tipo, max_paises:integer; var nombre_paises:string20);
+		begin
+			if (cant_tipo > max_paises) then
+				max_paises:=cant_tipo;
+				nombre_paises:=nombre_cien;
+		end;	
+
+	var
+		especie:planta;
+		i,minimo, cant_tipo, cant_vida, cantPaises, max1, max2, max_paises:integer;
+		actual, min_nombre, actual_pais, nom1, nom2, nombre_paises:string20;
+		resultado:real;
+
+	begin
+		max1:=-1;
+		max2:=-1;
+		minimo:=200;
+		max_paises:=0;
+
+        for i:=1 to 320 do begin //cada iteracion es una especie
+
+		  carga(especie);
+
+		  while (especie.paises <> 'zzz') do begin  //corte de lectura
+
+			  actual:=especie.tipo_planta;
+			  writeln('cambio de planta inicio');{chequeo}
+                          cant_vida:= 0;
+                          cant_tipo:=0;
+                          cantPaises:=0;
+			  while (especie.paises <> 'zzz') and (actual = especie.tipo_planta) do begin
+
+				  actual_pais:=especie.paises;
+
+				  maximo(especie.nombre_cien, especie.prome_vida, max1, max2, nom1, nom2);
+
+				  while (especie.paises <> 'zzz') and (actual_pais = especie.paises) do begin
+
+					  //if (especie.tipo_planta = actual) then
+					  cant_tipo:=cant_tipo+1;
+
+					  cant_vida:=cant_vida+especie.prome_vida;
+
+					  if (planta_argentina(especie.paises, especie.clima)) then begin
+						  write('Los nombres de las planta nativas de Argentina que se ');
+						  writeln(' encuentran en regiones con clima subtropical es ', especie.nombre_cien);
+					  end;
+
+					  carga(especie);
+					  writeln('el tercer while');{chequeo}
+					  writeln(cant_tipo);{chequeo}
+					  writeln(cant_vida);{chequeo}
+
+				  end; //cambio de pais
+
+                                  cantPaises:=cantPaises+1; //cuenta la cant de paises donde esta la planta
+				  menor_tipo(especie.tipo_planta, cant_tipo, min_nombre, minimo);
+
+			  end; //cambio tipo planta
+                          cant_paises(especie.nombre_cien, cantPaises, max_paises, nombre_paises);
+
+			  writeln('cambio de planta fin y sale function');
+			  writeln('El tiempo promedio de vida de las planta ',actual,' es de ',vida_promedio(cant_vida, cant_tipo):4:2);
+		  end;
+
+        end;    //final del for
+        writeln('El tipo de planta con menor cantidad de planta ',min_nombre);
+        writeln('El nombre cientifico de las dos planta mas longevas es ',nom1,' y ', nom2);
+        writeln('El nombre de la planta que se encuentra en mas paises es ',max_paises);
+end.
+
+
+{11. Una compañía de vuelos internacionales está analizando la información de todos los vuelos realizados por sus
+aviones durante todo el año 2019. De cada vuelo se conoce el código de avión, país de salida, país de llegada,
+cantidad de kilómetros recorridos y porcentaje de ocupación del avión. La información se ingresa ordenada por
+código de avión y, para cada avión, por país de salida. La lectura finaliza al ingresar el código 44. Informar:
+? Los dos aviones que más kilómetros recorrieron y los dos aviones que menos kilómetros recorrieron.
+? El avión que salió desde más países diferentes. FAAAAALTAAA HACERRRR
+? La cantidad de vuelos de más de 5.000 km que no alcanzaron el 60% de ocupación del avión.
+? La cantidad de vuelos de menos de 10.000 km que llegaron a Australia o a Nueva Zelanda.
+}
+program Hello;
+const
+    fin = 44;
+type
+    cadena20 = string[20];
+    vuelo = record
+        codigo:integer;
+        paisSalida:cadena20;
+        paisLlegada:cadena20;
+        cantKm:real;
+        porcentOcup:real;
+    end;
+function cumple1 (cantKmreco,ocupacion:real):integer;
+begin
+    if(cantKmreco > 5000) and (ocupacion < 0.6) then
+        cumple:= 1
+    else
+        cumple:= 0;
+end;
+function cumple (km:real; paisDeLlegada:cadena20):integer;
+begin
+    if(km < 10000) and ((paisDeLlegada = 'AUSTRALIA') or (paisDeLlegada = 'NUEVA ZELANDA')) then
+        cumple:= 1
+    else
+        cumple:= 0;
+end;
+procedure masKilometros(kmAct:real;var maxKm1,maxKm2:real; codigoAct: integer; var avionMax1,avionMax2:integer);
+begin
+    if (kmAct >maxKm1) then begin
+        maxKm2:=maxKm1;
+        avionMax2:=avionMax1;
+        maxKm1:=kmAct;
+        avionMax1::=codigoAct;
+    end
+    else if (kmAct > maxKm2) then begin
+            maxKm2:=kmAct;
+            avionMax1:=codigoAct;
+    end;
+end;
+
+procedure menosKilometros(cantKmAct:real;var minKm1,minKm2:real; codigoAct:integer; var avionMin1,avionMin2:integer);
+begin
+    if (kmAct < minKm1) then begin
+        minKm2:=minKm1;
+        avionMin2:=avionMin1;
+        minKm1:=cantKmAct;
+        avionMin1::=codigoAct;
+    end
+    else if (cantKmAct < minKm2) then begin
+            minKm2:=cantKmAct;
+            avionMin2:=codigoAct;
+    end;
+end;
+procedure (var v:vuelo);
+begin
+    with v do begin
+        writeln('CODIGO:');
+        readln(codigo);
+        if (codigo <> fin) then begin
+            writeln('PAIS DE SALIDA:');
+            readln(paisSalida);
+            writeln('PAIS DE LLEGADA:');
+            readln(paisLlegada);
+            writeln('CANTIDAD DE KM RECORRIDOS:');
+            readln(cantKm);
+            writeln('PORCENTAJE DE OCUPACION DEL AVION:');
+            readln(porcentOcup);
+        end;
+    end;
+end;
+
+var
+    vue:vuelo;
+    maxKm1,maxKm2,minKm1,minKm2:real;
+    ok,cantVuelos5000,cantLlegadaOc,oceania:integer;
+begin
+    maxKm1:=-1;                                                       avion 1
+                                                                            ciudad A
+                                                                            ciudad A
+                                                                            ciudad B
+                                                                            ciudad X     4 vuelos
+
+                                                                      avion 2
+                                                                            ciudad A
+                                                                            cuiuda B     2 vuelos
+    maxKm2:=-1;
+    minKm1:=99999;
+    minKm2:=99999;
+    cantVuelos5000 :=0;
+    cantLlegadaOc:=0;
+    leerVuelo(vue);
+    while (vue.codigo <> fin) do begin
+        codActual=vue.codigo; //codigo actual del avion
+        cantKm:=0;
+        cantPaisDistinto:=0;
+        while(vue.codigo <> fin) and  (codActual=vue.codigo) do begin //procesa el mismo avion
+            salidaAct:= vue.paisSalida;
+            while (vue.codigo <> fin) and (salidaAct= vue.paisSalida) do begin // una misma salida
+                cantVuelos5000 := cantVuelos5000 + cumple (vue.cantKm, vue.porcentOcup);
+                cantKm:=cantKm+vue.cantKM; //cuenta cant km total de un avion
+                cantLlegadaOc := cantLlegadaOc + oceania(vue.cantKm, vue.paisLlegada);
+                leerVuelo(vue);
+            end;
+            // CAMBIA DE PAIS DE SALIDA
+            cantPaisDistinto:= cantPaisDistinto+1;
+        end;
+        // CAMBIO COD DE AVION
+        masKilometros(cantKM,maxKm1,maxKm2,vue.codigo,avionMax1,avionMax2);
+        menosKilometros(cantKM,minKm1,minKm2,vue.codigo,avionMin1,avionMin2);
+        actualizarMaximoInciso2(cantPaisDistinto,....)
+
+     end;
+
+    writeln ('Los dos aviones que más kilómetros recorrieron son: ', avionMax2, ' y ', avionMax2);
+    writeln ('los dos aviones que menos kilómetros recorrieron son: ', avionMin1, ' y ', avionMin2);
+    imprimir max inciso 2
+
+    writeln (cantVuelos5000,' vuelos fueron de más de 5.000 km que no alcanzaron el 60% de ocupación del avión.');
+    writeln (cantLlegadaOc,' vuelos fueron de menos de 10.000 km que llegaron a Australia o a Nueva Zelanda.');
+
+end. //A ESTE CREO QUE LE FALTA UNA PARTE
+
+{12- En la “Práctica 1 - Ejercicios Adicionales” se resolvieron 3 problemas complejos sin utilizar módulos. Al carecer
+de herramientas para modularizar, esos programas resultaban difíciles de leer, de extender y de depurar.
+En la “Práctica 2 parte 2 - Ejercicios adicionales” se adaptaron los 3 problemas para utilizar módulos, y así organizar
+mejor el programa.
+Ahora podemos incluir los registros y así seguir mejorando nuestros programas. Para cada caso, analice
+- ¿qué entidades del programa conviene representar como registros?
+en el 3, codigo y precio del pdto.
+en el 4 los datos del planeta
+en el 5 
+- ¿qué atributos de cada entidad deben incluirse en los registros? eh?
+}
+
+
+
