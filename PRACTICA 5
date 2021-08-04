@@ -1,0 +1,250 @@
+// ------------------ PARTE TEÓRICA---------------
+{1) ¿Qué se define como memoria estática? Memoria STACK (estática)
+Las estructuras de datos vistas hasta ahora se almacenan estáticamente en la memoria física del ordenador.
+El espacio de memoria ser reserva con anticipación y NO CAMBIA DURANTE LA EJECUCIÓN DEL PROGRAMA.
+Esto permite una comprobación de tipos en TIEMPO DE COMPILACIÓN.         ALOCACIÓN ESTÁTICA -------> VARIABLES ESTÁTICAS
+Se la considera rígida ya que estas estructuras NO PUEDEN (DE)CRECER DURANTE LA EJECUCIÓN DEL PROGRAMA.
+2) ¿Qué se define como memoria dinámica? Memoria HEAP (dinámica)
+Los espacios de memoria asignados a las variables dinámicas se RESERVAN Y LIBERAN DURANTE LA EJECUCIÓN del programa.
+No hay espacio de memoria reservado.
+Se la considera flexible ya que las estructuras de este tipo PUEDEN (DE)CRECER DURANTE LA EJECUCIÓN DEL PROGRAMA.
+ALOCACIÓN DINÁMICAS -------> VARIABLES DINÁMICAS O REFERENCIADAS.
+
+3) ¿Qué es una variable de tipo puntero? Puntero (pointer) es un tipo de variable usada para 
+ALMACENAR LA DIRECCIÓN EN MEMORIA DINÁMICA de otra variable en lugar de un dato convencional.
+El puntero APUNTA O SEÑALA A LA VARIABLE ALMACENADA EN LA DIRECCIÓN DE MEMORIA DINÁMICA que contiene el puntero. NO DEBEMOS CONFUNDIR LA VARIABLE APUNTADA CON EL PUNTERO.
+4) ¿Qué hace la operación “NEW” aplicada en una variable del tipo puntero? Reserva espacio en la heap.
+5) ¿Qué hace la operación “DISPOSE” aplicada en una variable del tipo puntero? Libera espacio en la heap.
+}
+
+{PARTE PRÁCTICA
+Para algunos ejercicios de la parte práctica, se utilizará la función de Pascal “sizeof”, que recibe como
+parámetro una variable de cualquier tipo y retorna la cantidad de bytes que dicha variable ocupa en la
+memoria principal. Para realizar estos ejercicios, considerar la siguiente tabla, que indica la cantidad de bytes
+que ocupa la representación interna de distintos tipos de datos en un compilador de Pascal típico. Se
+recomienda graficar cada una de las situaciones planteadas a partir de una prueba de escritorio.
+
+TIPO CANTIDAD DE BYTES
+Entero 2 bytes
+Real 4 bytes
+Char 1 byte
+String Tantos bytes como indique la longitud del String + 1
+Record La suma de las longitudes de los campos del registro
+Puntero 4 bytes
+Boolean 1 byte
+
+1) Indicar los valores que imprime el siguiente programa en Pascal. Justificar mediante prueba de
+escritorio.}
+
+program punteros;
+type
+    cadena = string[50];
+    puntero_cadena = ^cadena;
+var
+    pc: puntero_cadena;
+begin
+    writeln(sizeof(pc), ' bytes'); // 4 bytes en stack
+    new(pc);
+    writeln(sizeof(pc), ' bytes');  // 4 bytes en stack y 51 en heap, total 55
+    pc^:= 'un nuevo nombre';
+    writeln(sizeof(pc), ' bytes');  // 4 bytes en stack y 51 en heap, total 55
+    writeln(sizeof(pc^), ' bytes');  // 2 bytes
+    pc^:= 'otro nuevo nombre distinto al anterior';
+    writeln(sizeof(pc^), ' bytes');
+end.
+
+{2) Indicar los valores que imprime el siguiente programa en Pascal. Justificar mediante prueba de
+escritorio.
+program punteros;
+type
+    cadena = string[9];
+    producto = record // 16 bytes
+        codigo: integer; // 2 bytes
+        descripcion: cadena; // 10 bytes
+        precio: real; // 4 bytes
+    end;
+    
+    puntero_producto = ^producto;
+    
+var
+    p: puntero_producto;
+    prod: producto;
+begin
+    writeln(sizeof(p), ' bytes'); // 4 bytes en stack
+    writeln(sizeof(prod), ' bytes'); // 16 bytes en stack
+    new(p);
+    writeln(sizeof(p), ' bytes'); // 4 bytes en stack y 16 en heap, total 20 bytes
+    p^.codigo := 1;
+    p^.descripcion := 'nuevo producto';
+    writeln(sizeof(p^), ' bytes'); // 16 bytes en heap
+    p^.precio := 200;
+    writeln(sizeof(p^), ' bytes'); // 16 bytes en heap
+    prod.codigo := 2;
+    prod.descripcion := 'otro nuevo producto';
+    writeln(sizeof(prod), ' bytes'); // 16 bytes en stack
+end.
+}
+
+{3) Indicar los valores que imprime el siguiente programa en Pascal. Justificar mediante prueba de
+escritorio.
+program punteros;
+type
+    numeros = array[1..10000] of integer;
+    puntero_numeros = ^numeros;
+var
+    n: puntero_numeros;
+    num: numeros;
+    i:integer;
+begin
+    writeln(sizeof(n), ' bytes'); //4 bytes
+    writeln(sizeof(num), ' bytes'); // 20000 bytes (2bytes *10000)
+    new(n);
+    writeln(sizeof(n^), ' bytes'); // 2000 bytes (2bytes *10000)
+    for i:= 1 to 5000 do
+        n^[i]:= i;
+    writeln(sizeof(n^), ' bytes'); //2000 bytes
+end.
+}
+
+{4) Indicar los valores que imprimen los siguientes programas en Pascal. Justificar mediante prueba de
+escritorio.
+a) program punteros;
+type
+    cadena = string[50];
+    puntero_cadena = ^cadena;
+var
+    pc: puntero_cadena;
+begin
+    pc^:= 'un nuevo texto';
+    new(pc);
+    writeln(pc^);// NO IMPRIME NADA porque el NEW ESTÁ DESPUÉS de la asignacion del pc^, por lo tanto no se le reservó espacio en memoria heap
+end.
+
+b) program punteros;
+type
+    cadena = string[50];
+    puntero_cadena = ^cadena;
+var
+    pc: puntero_cadena;
+begin
+    new(pc);
+    pc^:= 'un nuevo nombre';
+    writeln(sizeof(pc^), ' bytes'); //51 bytes -en heap-
+    writeln(pc^); // imprime "un nuevo nombre"
+    dispose(pc); //libero espacio en la heap
+    pc^:= 'otro nuevo nombre'; //no se imprime nada ya que el espacio se libero
+end.
+
+c) program punteros;
+type
+    cadena = string[50];
+    puntero_cadena = ^cadena;
+procedure cambiarTexto(pun: puntero_cadena);
+begin
+    pun^:= 'Otro texto';
+end;
+var
+    pc: puntero_cadena;
+begin
+    new(pc);
+    pc^:= 'Un texto';
+    writeln(pc^); //imprime "un texto"
+    cambiarTexto(pc);
+    writeln(pc^); //imprime "Otro texto", porque aunque fue un parametro por valor se comparte la direccion de memoria
+end.
+
+d) program punteros;
+type
+    cadena = string[50];
+    puntero_cadena = ^cadena;
+procedure cambiarTexto(pun: puntero_cadena);
+begin
+    new(pun);
+    pun^:= 'Otro texto';
+end;
+var
+    pc: puntero_cadena;
+begin
+    new(pc);
+    pc^:= 'Un texto';
+    writeln(pc^); //imprime "Un texto"
+    cambiarTexto(pc);
+    writeln(pc^); //imprime "Otro texto" porque el otro modulo cuando termino perdi el acceso a donde estaba Un texto
+end.}
+
+{5) De acuerdo a los valores de la tabla que indica la cantidad de bytes que ocupa la representación
+interna de cada tipo de dato en Pascal, calcular el tamaño de memoria en los puntos señalados a partir
+de(I), suponiendo que las variables del programa ya están declaradas y se cuenta con 400.000 bytes
+libres. Justificar mediante prueba de escritorio.}
+Program Alocacion_Dinamica;
+Type
+    TEmpleado = record // 72 BYTES
+        sucursal: char; //1 byte
+        apellido: string[25]; //26 byteS
+        correoElectronico: string[40]; //41 byteS
+        sueldo: real; //4 byteS
+    end;
+    Str50 = string[50]; //51 bytes
+Var
+    alguien: TEmpleado; //72 bytes en stack
+    PtrEmpleado: ^TEmpleado; // 4 bytes en stack
+Begin
+    {Suponer que en este punto se cuenta con 400.000 bytes de memoria disponible (I) 400.000-4-72= 399924}
+    readln( alguien.apellido );
+    {Pensar si la lectura anterior ha hecho variar la cantidad de memoria (II)}
+    New( PtrEmpleado ); //la estructura anterior no me hace varias la cantidad de memoria
+    {¿Cuánta memoria disponible hay ahora? (III) 399924-72 = 399852 de lo que reservo}
+    readln( PtrEmpleado^.Sucursal, PtrEmpleado^.apellido );
+    readln( PtrEmpleado^.correoElectronico, PtrEmpleado^.sueldo );
+    {¿Cuánta memoria disponible hay ahora? (IV) 399852}
+    dispose( PtrEmpleado );
+    {¿Cuánta memoria disponible hay ahora? (V) me libero el espacio en memoria, por lo tanto tengo nuevamente los 399924}
+end.
+
+{6) Se desea almacenar en memoria una secuencia de 2500 nombres de ciudades, cada nombre podrá
+tener una longitud máxima de 50 caracteres.
+a) Definir una estructura de datos estática que permita guardar la información leída. Calcular el tamaño
+de memoria que requiere la estructura.
+program Hello;
+const
+    dimF = 2500;
+Type
+    rango_vec = 1..dimF;
+    cadena50 = string[50];
+    vec_nombres = array [rango_vec] of cadena50; //tamaño de memoria que requiere la estructura: 2500x51= 127500 en stack
+begin
+end.}
+{b) Dado que un compilador de Pascal típico no permite manejar estructuras de datos estáticas que
+superen los 64 Kb, pensar en utilizar un vector de punteros a palabras, como se indica en la siguiente
+estructura:
+b.1) Indicar cuál es el tamaño de la variable Punteros al comenzar el programa. AL comenzar el programa el tamaño de Punteros es 2500x4 =10000
+b.2) Escribir un módulo que permita reservar memoria para los 2500 nombres. ¿Cuál es la cantidad de
+memoria reservada después de ejecutar el módulo? ¿La misma corresponde a memoria estática o
+dinámica? 2500x51= 127500y corresponde a dinamica // recordar 10000 en  stack (4bytes de los punteros por 2500 las posiciones del vec)
+b.3) Escribir un módulo para leer los nombres y almacenarlos en la estructura de la variable Punteros.}
+program Hello;
+Type
+    Nombre = String[50];
+    Puntero = ^Nombre;
+    ArrPunteros = array[1..2500] of Puntero;
+Var
+Punteros: ArrPunteros;
+
+procedure reservarMemoria (var ap:ArrPunteros);
+var i:integer;
+begin
+    for i:=1 to 2500 do
+        new(ap[i]);
+end;
+procedure leerYalmacenar(var ap:ArrPunteros);
+var 
+    nom:Nombre;
+    i:integer;
+begin
+    for i:=1 to 2500 do begin
+        writeln('NOMBRE:');
+        readln(nom);
+        ap[i]^:=nom;
+    end;
+end;
+
