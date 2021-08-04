@@ -1,0 +1,1338 @@
+{1. Dado el siguiente programa:
+a. Indicar qué hace el programa. Genera una lista con numeros enteros que se va armando en el orden invertido al ingresado.
+b. Indicar cómo queda conformada la lista si se lee la siguiente secuencia de números: 10 21 13 48 0. Queda conformada entonces 48,13,21,10
+c. Implementar un módulo que imprima los números enteros guardados en la lista generada. es imprimirLista(pri);
+d. Implementar un módulo que reciba la lista y un valor, e incremente con ese valor cada dato de la lista. 
+
+}
+program JugamosConListas;
+type
+    lista = ^nodo;
+    nodo = record
+         num : integer;
+         sig : lista;
+    end;
+procedure incrementarValor (var l:lista; x:integer); 
+var
+    aux:lista; //uso un auxiliar para recorrer
+Begin
+    aux:=l; //que apunten a lo mismo
+    while (aux <> NIL) do begin
+        aux^.num:=aux^.num+x;
+        aux:= aux^.sig;
+    end;
+end;
+Procedure imprimirLista ( l : lista);
+
+Begin
+ while (l <> NIL) do begin
+   writeln ('Los numeros ingresados fueron: ',l^.num) ;
+   l:= l^.sig;
+ end;
+end;
+    
+procedure armarNodo(var L: lista; v: integer);
+var
+    aux : lista;
+begin
+     new(aux);
+     aux^.num := v;
+     aux^.sig := L;
+     L := aux;
+end;
+var
+     pri : lista;
+     valor,numNuevo : integer;
+begin
+     pri := nil;
+     writeln('Ingrese un numero');
+     read(valor);
+     while (valor <> 0) do begin
+         armarNodo(pri, valor);
+         writeln('Ingrese un numero');
+         read(valor);
+    end;
+    imprimirLista(pri);   { imprime la lista }
+    writeln('SUMALE EL VALOR:');
+    readln(numNuevo);
+    incrementarValor(pri,valor);
+end.
+
+{2. Dado el siguiente código que lee información de personas hasta que se ingresa la persona con dni 0 y luego
+imprime dicha información en el orden inverso al que fue leída, identificar los 9 errores.}
+
+program ejercicio2;
+type
+    lista = ^nodo;
+    persona = record
+         dni: integer;
+         nombre: string;
+         apellido: string;
+    end;
+    nodo = record
+        dato: persona;
+        sig: lista;
+    end;
+procedure leerPersona(p: persona);// 3.leerPersona debe recibir el parametro del registro persona por referencia
+begin
+    read(p.dni);
+    if (p.dni <> 0)then begin
+        read(p.nombre);
+        read(p.apellido);
+    end;
+end;
+
+{Agrega un nodo a la lista}
+procedure agregarAdelante(l:lista;p:persona);//5. la lista debe ser enviada por referencia
+var
+    aux: lista;
+begin
+     aux^.dato:= p;//6. falta el new(aux)
+     aux^.sig:= l;
+     l:= aux;
+end;
+
+{Carga la lista hasta que llega el dni 0}
+procedure generarLista(var l:lista);
+var
+    p:nodo; //2. deberia ser de tipo PERSONA
+begin
+     leerPersona(p);
+     while (p.dni <> 0) do begin
+        agregarAdelante(l,p); //4.falta volver a leerPersona(p);
+     end;
+end;
+procedure imprimirInformacion(var l:lista);//7. la lista debe enviarse por valor, no por referencia
+begin
+    while (l <> nil) do begin
+        writeln('DNI: ', l^.dato.dni, 'Nombre:', l^.nombre, 'Apellido:', l^.apellido); //8. mal es l^.dato.nombre y l^.dato.apellido
+    l:= l^.sig;
+ end;
+end;
+{Programa principal}
+var
+    l:lista;
+begin
+     generarLista(l);//1. falta inicializar la lista en nil, l:=nil
+     imprimirInformacion(l);
+end.
+
+{3. Utilizando el programa del ejercicio 1, realizar los siguientes cambios:
+a. Modificar el módulo armarNodo para que los elementos se guarden en la lista en el orden en que fueron
+ingresados (agregar atrás).
+b. Modificar el módulo armarNodo para que los elementos se guarden en la lista en el orden en que fueron
+ingresados, manteniendo un puntero al último ingresado.
+program JugamosConListas;
+type
+    lista = ^nodo;
+    nodo = record
+         num : integer;
+         sig : lista;
+    end;
+procedure incrementarValor (var l:lista; x:integer);
+Begin
+ while (l <> NIL) do begin
+   l^.num:=l^.num+x;
+   l:= l^.sig;
+ end;
+end;
+Procedure imprimirLista ( l : lista);
+
+Begin
+ while (l <> NIL) do begin
+   writeln ('Los numeros ingresados fueron: ',l^.num) ;
+   l:= l^.sig;
+ end;
+end;
+procedure AgregarAlFinal (var pri: lista; valor:integer); 
+var  act, nue : lista;
+
+begin 
+ new (nue);
+ nue^.num:= valor;
+ nue^.sig := NIL;
+ if pri <> Nil then begin
+                 act := pri ;
+                 while  (act^.sig <> NIL ) do act := act^.sig ;
+                 act^.sig := nue ;
+               end
+               else
+                 pri:= nue;
+end;
+
+
+var
+     pri: lista;
+     valor,numNuevo : integer;
+begin
+     pri := nil;
+     writeln('Ingrese un numero');
+     read(valor);
+     while (valor <> 0) do begin
+         AgregarAlFinal(pri,valor);
+         writeln('Ingrese un numero');
+         read(valor);
+    end;
+    imprimirLista(pri);   { imprime la lista }
+{    writeln('SUMALE EL VALOR:');
+    readln(numNuevo);
+    incrementarValor(pri,valor);
+end.
+}
+program JugamosConListas;
+type
+    lista = ^nodo;
+    nodo = record
+         num : integer;
+         sig : lista;
+    end;
+procedure incrementarValor (var l:lista; x:integer);
+Begin
+ while (l <> NIL) do begin
+   l^.num:=l^.num+x;
+   l:= l^.sig;
+ end;
+end;
+Procedure imprimirLista ( l : lista);
+
+Begin
+ while (l <> NIL) do begin
+   writeln ('Los numeros ingresados fueron: ',l^.num) ;
+   l:= l^.sig;
+ end;
+end;
+procedure AgregarAlFinal2 (var pri, ult: lista; valor:integer); 
+var  nue : lista;
+
+begin 
+ new (nue);
+ nue^.num:= valor;
+ nue^.sig := NIL;
+ if pri <> Nil then 
+                 ult^.sig := nue;
+               else 
+                 pri := nue;
+ ult := nue;
+end;
+
+var
+     pri,ult : lista;
+     valor,numNuevo : integer;
+begin
+     pri := nil;
+     ult:=nil;
+     writeln('Ingrese un numero');
+     read(valor);
+     while (valor <> 0) do begin
+         AgregarAlFinal(pri,ult,valor);
+         writeln('Ingrese un numero');
+         read(valor);
+    end;
+    imprimirLista(pri);   { imprime la lista }
+    writeln('SUMALE EL VALOR:');
+    readln(numNuevo);
+    incrementarValor(pri,valor);
+end.
+
+{4. Utilizando el programa del ejercicio 1, realizar los siguientes módulos:
+a. Máximo: recibe la lista como parámetro y retorna el elemento de valor máximo.
+b. Mínimo: recibe la lista como parámetro y retorna el elemento de valor mínimo.
+c. Múltiplos: recibe como parámetros la lista L y un valor entero A, y retorna la cantidad de elementos de la
+lista que son múltiplos de A.}
+program JugamosConListas;
+type
+    lista = ^nodo;
+    nodo = record
+         num : integer;
+         sig : lista;
+    end;
+function multiplos (l:lista, enteroA:integer):integer;
+begin
+end;
+// Maximo y minimo: reciben la lista como parámetro y retornan el elemento de valor maximo/minimo segun corresponda.
+function minimo (l:lista):integer;
+var
+    min:integer;
+begin
+    min:=9999;
+    while (l<> nil) do begin  //recorro la lista
+      if(l^.num < min) then //comparo con el elem de la lista
+        min := l^.num; //actualizo minimo
+      l:=l^.sig; //avanza al sig nodo
+    end;
+
+    minimo:= min;
+end;
+procedure incrementarValor (var l:lista; x:integer); 
+var
+    aux:lista; //uso un auxiliar para recorrer
+Begin
+    aux:=l; //que apunten a lo mismo
+    while (aux <> NIL) do begin
+        aux.num:=aux^.num+x;
+        aux:= aux^.sig;
+    end;
+end;
+Procedure imprimirLista ( l : lista);
+
+Begin
+ while (l <> NIL) do begin
+   writeln ('Los numeros ingresados fueron: ',l^.num) ;
+   l:= l^.sig;
+ end;
+end;
+    
+procedure armarNodo(var L: lista; v: integer);
+var
+    aux : lista;
+begin
+     new(aux);
+     aux^.num := v;
+     aux^.sig := L;
+     L := aux;
+end;
+var
+     pri : lista;
+     valor,numNuevo, nromaximo, nrominimo : integer;
+begin
+     pri := nil;
+     writeln('Ingrese un numero');
+     read(valor);
+     while (valor <> 0) do begin
+         armarNodo(pri, valor);
+         writeln('Ingrese un numero');
+         read(valor);
+    end;
+    imprimirLista(pri);   { imprime la lista }
+    writeln('SUMALE EL VALOR:');
+    readln(numNuevo);
+    incrementarValor(pri,valor);
+    nromaximo:=maximo(pri);
+    nrominimo:=minimo(pri);
+end.
+
+//CREO QUE A ESTE LE FALTABA EL ULTIMO
+
+{5. Realizar un programa que lea y almacene la información de productos de un supermercado. De cada
+producto se lee: código, descripción, stock actual, stock mínimo y precio. La lectura finaliza cuando se ingresa
+el código -1, que no debe procesarse. Una vez leída y almacenada toda la información, calcular e informar:
+a. Porcentaje de productos con stock actual por debajo de su stock mínimo.
+b. Descripción de aquellos productos con código compuesto por al menos tres dígitos pares.
+c. Código de los dos productos más económicos.  
+al menos -> como minimo a
+lo sumo -> como maximo}
+program Hello;
+type
+    cadena50=string[50];
+    producto = record
+        cod:integer;
+        descrip:cadena50;
+        stockAct:integer;
+        stockMin:integer;
+        precio:real;
+    end;
+    lista = ^nodo;
+    nodo = record
+        dato:producto;
+        sig: lista;
+    end;
+procedure informar(pri:lista; porcentaje:real; cod1,cod2:integer);
+begin
+    writeln('Porcentaje de productos con stock actual por debajo de su stock mínimo: ',porcentaje:2:2,' %');
+    writeln(cod1,' y ',cod2, 'son los codigos de los dos productos más económicos.');
+    
+end;
+procedure dosMasEconomicos (precioActual:real;codActual:integer; var min1,min2:real; var cod1,cod2:integer);
+begin
+    if(precioActual < min1)then begin
+        min2:=min1;
+        cod2:=cod1;
+        min1:=precioActual;
+        cod1:=codActual;
+    end
+    else
+    if (precioActual < min2) then begin
+        min2:=precioActual;
+        cod2:=codActual;
+    end;
+end;
+function calcularPorcentaje(cantidad, total:integer):real;
+begin
+    calcularPorcentaje:= (cantidad/total)*100;
+end;
+procedure digitosPares (num:integer;descrip:cadena50);
+var
+    dig,cantPares:integer;
+begin
+    cantPares:= 0;
+    while (num <> 0) and (cantPares < 3) do begin
+        dig:= num mod 10;
+        if (dig mod 2 = 0) then
+            cantPares:=cantPares+1;
+        num:=num div 10;
+    end;
+    if (cantPares >= 3) then
+        writeln(descrip);
+end;
+function cantStockActMenor(actual,minimo:integer):integer;
+begin
+    if (actual<minimo) then
+        cantStockActMenor:=1
+    else
+        cantStockActMenor:=0;
+end;
+procedure recorrerLista(pri:lista; var porcentaje:real;cod1,cod2:integer);
+var
+    min1,min2:real;
+    cantStock,totalProductos:integer;
+begin
+    min1:=9999;
+    min2:=9999;
+    cantStock:=0;
+    totalProductos:=0;
+    while (pri<>nil) do begin
+        totalProductos:=totalProductos+1;
+        cantStock:=cantStock + cantStockActMenor(pri^.dato.stockAct, pri^.dato.stockMin);
+        digitosPares(pri^.dato.cod, pri^.dato.descrip);
+        dosMasEconomicos(pri^.dato.precio,pri^.dato.cod,min1,min2,cod1,cod2);
+        pri:=pri^.sig; //avanzo en la lista
+    end;
+    porcentaje:=calcularPorcentaje(cantStock,totalProductos);
+end;
+procedure agregarAdelante (var l:lista; prod:producto);
+var
+    aux:lista;
+begin
+    new(aux);
+    aux^.dato:=prod;
+    aux^.sig:=l;
+    l:=aux;
+end;
+procedure leerProductos(var prod:producto);
+begin
+    with prod do begin
+        writeln('CODIGO:');
+        readln(cod);
+        if ( cod <> -1 ) then begin
+            writeln('DESCRIPCION:');
+            readln(descrip);
+            writeln('STOCK ACTUAL:');
+            readln(stockAct);
+            writeln('STOCK MINIMO:');
+            readln(stockMin);
+        end;
+    end;
+end;
+procedure generarLista(var pri:lista);
+var
+    prod:producto;
+begin
+    leerProductos(prod);
+    while (prod.cod <> -1) do begin
+        agregarAdelante(pri,prod);
+        leerProductos(prod);
+    end;
+end;
+var
+    l:lista;
+    porcentaje:real;
+    cod1,cod2:integer;
+begin
+    l:=nil; //inicializo el puntero inicial de la lista en nil;
+    generarLista(l);
+    recorrerLista(l,porcentaje,cod1,cod2);
+    informar(l,porcentaje,cod1,cod2);
+end.
+
+{6. La Agencia Espacial Europea (ESA) está realizando un relevamiento de todas las sondas espaciales lanzadas
+al espacio en la última década. De cada sonda se conoce su nombre, duración estimada de la misión (cantidad
+de meses que permanecerá activa), el costo de construcción, el costo de mantenimiento mensual y rango del
+espectro electromagnético sobre el que realizará estudios. Dicho rango se divide en 7 categorías:
+1. radio; 2. microondas; 3.infrarrojo; 4. luz visible; 5. ultravioleta; 6. rayos X; 7. rayos gamma
+Realizar un programa que lea y almacene la información de todas las sondas espaciales. La lectura finaliza al
+ingresar la sonda llamada “GAIA”, que debe procesarse.
+Una vez finalizada la lectura, informar:
+a. El nombre de la sonda más costosa (considerando su costo de construcción y de mantenimiento).
+b. La cantidad de sondas que realizarán estudios en cada rango del espectro electromagnético.
+c. La cantidad de sondas cuya duración estimada supera la duración promedio de todas las sondas.
+d. El nombre de las sondas cuyo costo de construcción supera el costo promedio entre todas las sondas.
+Nota: para resolver los incisos a), b), c) y d), la lista debe recorrerse una única vez.}
+program Hello;
+const
+    dimF = 7;
+type
+    rangoEspectro = 1..dimF;
+    cadena15 = string[15];
+    sonda = record
+        nombre:cadena15;
+        duracEstimada:integer;
+        costoConstruc:real;
+        costoMantenMens:real;
+        rango:rangoEspectro;
+    end;
+    vec_espectro = array [rangoEspectro] of integer;
+    lista=^nodo;
+    nodo=record
+        dato:sonda;
+        sig:lista;
+    end;
+    
+    lista_nombre=^nodo1;
+    nodo1=record
+        nombre:cadena15;
+        sig:lista;
+    end;
+function VerificoSiesMayor (duracEstimada, duracProm:real):integer;
+begin
+    if (duracEstimada > duracProm) then
+        VerificoSiesMayor:=1
+    else
+        VerificoSiesMayor:=0;
+end;
+procedure recorrerVecContador(vc:vec_espectro);
+var 
+    i:integer;
+begin
+    for i:= 1 to dimF do
+    writeln('cantidad de sondas para el espectro ',i ,' es ', vc[i]);
+end;
+procedure masCostosa(nombreActual:cadena15;costoConstruc,costoMantenMens:real;var max:real;var nombre:cadena15);
+var
+    total:real;
+begin
+    total:= costoMantenMens+costoConstruc;
+    if (total > max) then begin
+        max:=total;
+        nombre:=nombreActual;
+    end;
+        
+end;
+procedure agregarAdelante(var pri:lista_nombre; nom:cadena15);
+var
+    nue:lista_nombre;
+begin
+    new(nue);
+    nue^.nombre:=nom;
+    nue^.sig:=pri;
+    pri:=nue;
+end;
+recorrerLista (pri:lista;var vc:vec_espectro; duracProm,costoPromedio:real);
+var
+    max:real; nombreCostosa:cadena15;
+    ln:lista_nombre;
+begin
+    ln:=nil;
+    max:=-1;
+    while (pri <> nil) do begin
+        masCostosa(pri^.dato.nombre,pri^.dato.costoConstruc,pri^.dato.costoMantenMens,max, nombreCostosa);
+        vc[l^.dato.rango]:=vc[l^.dato.rango]+1;
+        cantSondasMayDurac:=cantSondasMayDurac+(VerificoSiesMayor (l^.dato.duracEstimada, duracProm);
+        if (l^.dato.costoConstruc > costoPromedio) then
+            agregarAdelanteNombre(ln,l^.dato.nombre);
+        pri:=pri^.sig;
+    end;
+    writeln(nombreCostosa,'es la sonda más costosa (considerando su costo de construcción y de mantenimiento)');
+    recorrerVecContador(vc);// HACER FOR E INFORMAR
+    writeln(cantSondasMayDurac,'es la cantidad de sondas cuya duración estimada supera la duración promedio de todas las sondas.');
+end;
+procedure agregarAdelante(var pri:lista;s:sonda);
+var
+    aux:lista;
+begin
+    new(aux);
+    aux^.dato:=s;
+    aux^.sig:=pri;
+    pri:=aux;
+end;
+procedure leerSonda(var s:sonda);
+begin
+    with s do begin
+        writeln('NOMBRE:');
+        readln(nombre);
+        writeln('DURACION ESTIMADA DE LA MISION:');
+        readln(duracEstimada);
+        writeln('COSTO DE CONSTRUCCION:');
+        readln(costoConstruc);
+        writeln('COSTO DE MANTENIMIENTO MENSUAL:');
+        readln(costoMantenMens);
+        writeln('RANGO DEL ESPECTRO ELECTROMAGNETICO:');
+        readln(rango);
+    end;
+end;
+procedure generarLista(var pri:lista;var promedio:real; costoPromedio:real);
+var
+    s:sonda;
+    totalDuracion,cantSondas:integer;
+    totalCosto:real;
+begin
+    cantSondas:=0;
+    totalDuracion:=0;
+    totalCosto:=0;
+    repeat
+        leerSonda(s);
+        agregarAdelante(pri,s);
+        cantSondas:= cantSondas + 1;
+        totalDuracion:= totalDuracion + s.duracEstimada;
+        totalCosto:=totalCosto+s.costoConstruc;
+   until (s.nombre = 'GAIA');
+   promedio:=(totalDuracion/cantSondas);
+   costoPromedio:=(totalCosto/cantSondas);
+end; 
+procedure inicializarVector(var v:vec_espectro);
+var
+    i:integer;
+begin
+    for i:=1 to dimF do
+        v[i]:=0;
+end;
+var
+    l:lista;
+    v:vec_espectro;
+    prom,costoPromedio:real;
+begin
+    l:=nil;
+    listaCumple:=nil;
+    listaNoCumple:=nil;
+    inicializarVector(v);
+    generarLista(l,prom,costoPromedio);
+    recorrerLista(l,costoPromedio);
+end.
+
+{7. El Programa Horizonte 2020 (H2020) de la Unión Europea ha publicado los criterios para financiar proyectos
+de investigación avanzada. Para los proyectos de sondas espaciales vistos en el ejercicio anterior, se han
+determinado los siguientes criterios:
+-sólo se financiarán proyectos cuyo costo de mantenimiento no supere el costo de construcción.
+- no se financiarán proyectos espaciales que analicen ondas de radio, ya que esto puede realizarse desde la
+superficie terrestre con grandes antenas.
+A partir de la información disponible de las sondas espaciales (la lista generada en ejercicio 6), implementar
+un programa que:
+a. Invoque un módulo que reciba la información de una sonda espacial, y retorne si cumple o no con los nuevos
+criterios H2020.
+b. Utilizando el módulo desarrollado en a) implemente un módulo que procese la lista de sondas de la ESA y
+retorne dos listados, uno con los proyectos que cumplen con los nuevos criterios y otro con aquellos que no
+los cumplen.
+c. Invoque a un módulo que reciba una lista de proyectos de sondas espaciales e informe la cantidad y el costo
+total (construcción y mantenimiento) de los proyectos que no serán financiados por H2020. Para ello, utilice
+el módulo realizado en b.
+
+}
+program Hello;
+const
+    dimF = 7;
+type
+    rangoEspectro = 1..dimF;
+    cadena15 = string[15];
+    sonda = record
+        nombre:cadena15;
+        duracEstimada:integer;
+        costoConstruc:real;
+        costoMantenMens:real;
+        rango:rangoEspectro;
+    end;
+    vec_espectro = array [rangoEspectro] of integer;
+    
+    lista=^nodo;
+    nodo=record
+        dato:sonda;
+        sig:lista;
+    end;
+
+procedure imprimirLista(l:lista);
+var 
+    cantTotalProy:integer;
+    costoTotal:real;
+begin
+    cantTotalProy:=0;
+    costoTotal:=0;
+    while (l<> nil) do begin
+        cantTotalProy:=cantTotalProy+1;
+        costoTotal:=costoTotal+(l^.dato.costoConstruc  + l^.dato.costoMantenMens * l^.dato.duracEstimada);
+        l:=l^.sig;
+    end;
+    writeln('el costo total:',costoTotal);
+    writeln('la cant total de sondas es:',cantTotalProy);
+end;
+procedure agregarAdelante2(var pri:lista; s:sonda);
+var
+    nue:lista;
+begin
+    new(nue);
+    nue^.dato:=s;
+    nue^.sig:=pri;
+    pri:=nue;
+end;
+function cumple(MantenMens:real;duracEstimada:integer;costoConstruc:real;rangoActual:rangoEspectro):boolean;
+begin
+    cumple:= ((MantenMens * duracEstimada)< costoConstruc) and (rangoActual <> 1)
+end;
+function VerificoSiesMayor (duracEstimada:integer; duracProm:real):integer;
+begin
+    if (duracEstimada > duracProm) then
+        VerificoSiesMayor:=1
+    else
+        VerificoSiesMayor:=0;
+end;
+procedure recorrerVecContador(vc:vec_espectro);
+var 
+    i:integer;
+begin
+    for i:= 1 to dimF do
+    writeln('cantidad de sondas para el espectro ',i ,' es ', vc[i]);
+end;
+procedure masCostosa(nombreActual:cadena15;costoConstruc,costoMantenMens:real;var max:real;var nombre:cadena15);
+var
+    total:real;
+begin
+    total:= costoMantenMens+costoConstruc;
+    if (total > max) then begin
+        max:=total;
+        nombre:=nombreActual;
+    end;
+        
+end;
+procedure agregarAdelanteNombre(var pri:lista; nom:cadena15);
+var
+    nue:lista;
+begin
+    new(nue);
+    nue^.dato.nombre:=nom;
+    nue^.sig:=pri;
+    pri:=nue;
+end;
+procedure recorrerLista (pri:lista;var vc:vec_espectro; duracProm,costoPromedio:real;var listaCumple,listaNoCumple:lista);
+var
+    max:real; 
+    nombreCostosa:cadena15;
+    ln:lista;
+    cantSondasMayDurac:integer;
+begin
+    ln:=nil;
+    max:=-1;
+    cantSondasMayDurac:=0;
+    while (pri <> nil) do begin
+        masCostosa(pri^.dato.nombre,pri^.dato.costoConstruc,pri^.dato.costoMantenMens,max, nombreCostosa);
+        vc[pri^.dato.rango]:=vc[pri^.dato.rango]+1;
+        cantSondasMayDurac:=cantSondasMayDurac+(VerificoSiesMayor(pri^.dato.duracEstimada, duracProm));
+        if (pri^.dato.costoConstruc > costoPromedio) then
+            agregarAdelanteNombre(ln,pri^.dato.nombre);
+        if (cumple(pri^.dato.costoMantenMens,pri^.dato.duracEstimada,pri^.dato.costoConstruc,pri^.dato.rango)) then 
+            agregarAdelante2(listaCumple,pri^.dato)
+        else
+            agregarAdelante2(listaNoCumple,pri^.dato);
+        
+        pri:=pri^.sig;
+    end;
+    writeln(nombreCostosa,'es la sonda más costosa (considerando su costo de construcción y de mantenimiento)');
+    recorrerVecContador(vc);
+    writeln(cantSondasMayDurac,'es la cantidad de sondas cuya duración estimada supera la duración promedio de todas las sondas.');
+end;
+procedure agregarAdelante(var pri:lista;s:sonda);
+var
+    aux:lista;
+begin
+    new(aux);
+    aux^.dato:=s;
+    aux^.sig:=pri;
+    pri:=aux;
+end;
+procedure leerSonda(var s:sonda);
+begin
+    with s do begin
+        writeln('NOMBRE:');
+        readln(nombre);
+        writeln('DURACION ESTIMADA DE LA MISION:');
+        readln(duracEstimada);
+        writeln('COSTO DE CONSTRUCCION:');
+        readln(costoConstruc);
+        writeln('COSTO DE MANTENIMIENTO MENSUAL:');
+        readln(costoMantenMens);
+        writeln('RANGO DEL ESPECTRO ELECTROMAGNETICO:');
+        readln(rango);
+    end;
+end;
+procedure generarLista(var pri:lista;var promedio:real; costoPromedio:real);
+var
+    s:sonda;
+    totalDuracion,cantSondas:integer;
+    totalCosto:real;
+begin
+    cantSondas:=0;
+    totalDuracion:=0;
+    totalCosto:=0;
+    repeat
+        leerSonda(s);
+        agregarAdelante(pri,s);
+        cantSondas:= cantSondas + 1;
+        totalDuracion:= totalDuracion + s.duracEstimada;
+        totalCosto:=totalCosto+s.costoConstruc;
+   until (s.nombre = 'GAIA');
+   promedio:=(totalDuracion/cantSondas);
+   costoPromedio:=(totalCosto/cantSondas);
+end; 
+procedure inicializarVector(var v:vec_espectro);
+var
+    i:integer;
+begin
+    for i:=1 to dimF do
+        v[i]:=0;
+end;
+var
+    l,listaCumple, listaNoCumple:lista;
+    v:vec_espectro;
+    prom,costoPromedio:real;
+begin
+    l:=nil;
+    listaCumple:=nil;
+    listaNoCumple:=nil;
+    inicializarVector(v);
+    generarLista(l,prom,costoPromedio);
+    recorrerLista(l,v,prom,costoPromedio, listaCumple, listaNoCumple);
+    imprimirLista(listaNoCumple);
+end.
+
+{8. Utilizando el programa del ejercicio 1, modificar el módulo armarNodo para que los elementos de la lista
+queden ordenados de manera ascendente (insertar ordenado).}
+program JugamosConListas;
+type
+    lista = ^nodo;
+    nodo = record
+         num : integer;
+         sig : lista;
+    end;
+procedure incrementarValor (var l:lista; x:integer); 
+var
+    aux:lista; //uso un auxiliar para recorrer
+Begin
+    aux:=l; //que apunten a lo mismo
+    while (aux <> NIL) do begin
+        aux^.num:=aux^.num + x;
+        aux:= aux^.sig;
+    end;
+end;
+Procedure imprimirLista ( l : lista);
+
+Begin
+ while (l <> NIL) do begin
+   writeln ('Los numeros ingresados fueron: ',l^.num) ;
+   l:= l^.sig;
+ end;
+end;
+    
+procedure insertarOrdenado(var L: lista; v: integer);
+var
+    ant,nue,act : lista;
+begin
+     new(nue);
+     nue^.num := v;
+     ant:=L;
+     act:=L;
+     while (act <> nil) and (act^.num < v) do begin
+        ant:= act;
+        act:=act^.sig;
+     end;
+     if (ant=act) then
+        L:=nue
+     else
+        ant^.sig:= nue;
+    nue^.sig:=act;
+end;
+var
+     pri : lista;
+     valor,numNuevo : integer;
+begin
+     pri := nil;
+     writeln('Ingrese un numero');
+     read(valor);
+     while (valor <> 0) do begin
+         insertarOrdenado(pri,valor);
+         writeln('Ingrese un numero');
+         read(valor);
+    end;
+    imprimirLista(pri);   { imprime la lista }
+    writeln('SUMALE EL VALOR:');
+    readln(numNuevo);
+    incrementarValor(pri,valor);
+end.
+
+{9. Utilizando el programa del ejercicio 1, realizar los siguientes módulos:
+a. EstáOrdenada: recibe la lista como parámetro y retorna true si la misma se encuentra ordenada, o false en
+caso contrario.
+b. Eliminar: recibe como parámetros la lista y un valor entero, y elimina dicho valor de la lista (si existe). Nota:
+la lista podría no estar ordenada.
+c. Sublista: recibe como parámetros la lista L y dos valores enteros A y B, y retorna una nueva lista con todos
+los elementos de la lista L mayores que A y menores que B.
+d. Modifique el módulo Sublista del inciso anterior, suponiendo que la lista L se encuentra ordenada de manera
+ascendente.
+e. Modifique el módulo Sublista del inciso anterior, suponiendo que la lista L se encuentra ordenada de manera
+descendente.}
+
+program JugamosConListas;
+type
+    lista = ^nodo;
+    nodo = record
+        num : integer;
+        sig : lista;
+    end;
+
+procedure armarNodo(var L: lista; v: integer);
+var
+    aux : lista;
+begin
+    new(aux);
+    aux^.num := v;
+    aux^.sig := L;
+    L := aux;
+end;
+{a.EstáOrdenada: recibe la lista como parámetro y retorna true si la misma se encuentra ordenada, o false en caso
+contrario.}
+function EstaOrdenada (l:lista):boolean;
+var
+    comparar:integer;
+    ok:boolean;
+begin
+    comparar:=0;    // EN REALIDAD ESTE COMPARAR DEBERIA SER EL PRIMER ELEMENTO DE LA LISTA
+    ok:=false; // EN TODO CASO INICIALIZALO EN FALSE
+    while (l<> nil) and (not ok) do begin //revisar el ok     --------------> SI PONES NOT OK Y LO INICIALIZAS EN TRUE, EL (NOT OK) TE VA A DAR FALSO
+       /// num:=l^.num; //dato a comparar
+        If (l^.num > comparar) then
+            comparar:=l^.num
+        else
+            ok:=false; //la lista no cumple
+        l:=l^.sig;
+    end;
+    EstaOrdenada:= ok;
+end;
+
+
+//ALGO ASI TE QUEDARIA!
+
+function EstaOrdenada(l:lista):boolean; //VERIFICA SI LA LISTA ESTA ORDENADA DE MENOR A MAYOR
+var
+    ordenada: boolean;
+    actual,anterior: integer;
+begin
+    ordenada:=true; //SUPONGO QUE ESTÁ ORDENADA
+    actual:=-9999; //LO TENGO QUE INICIALIZAR EN UN NUMERO MUY CHICO ASI AL PRINCIPIO ANTERIOR TOMA UN VALOR
+    while (l<>nil) and (ordenada) do begin
+        anterior:=actual;
+        actual:=l^.num;
+        if(anterior > actual) then //VOY COMPARANDO EL ACTUAL CON EL NUMERO ANTERIOR
+            ordenada:=false;
+        l:=l^.sig;
+    end;
+    EstaOrdenada:=ordenada;
+end;
+
+
+
+{b. Eliminar: recibe como parámetros la lista y un valor entero, y elimina dicho valor de la lista (si existe). Nota: la lista
+podría no estar ordenada.}
+
+
+
+//SI LA LISTA NO ESTA ORDENADA, TENES QUE RECORRER HASTA ENCONTRAR EL NUMERO.
+//SI LA LISTA ESTA ORDENADA, PODRIAS HACER UNA BUSQUEDA DICOTOMICA PARA BUSCARLO MAS RAPIDO
+
+//RESPECTO A ELIMINAR MAS DE UNA OCURRENCIA, CREO QUE SE LOS HABIA SUBIDO EL CODIGO PERO PARA VECTORES
+//EN LISTAS ES EXACTAMENTE LA MISMA IDEA!
+
+
+
+{c. Sublista: recibe como parámetros la lista L y dos valores enteros A y B, y retorna una nueva lista con todos los
+elementos de la lista L mayores que A y menores que B.}
+procedure sublista(l:lista; numA, numB: integer; var lnueva:lista);
+begin
+    if (l^.dato > numA) and (l^.dato< numB)) then
+        agregarAdelante(l^.dato, );
+    l:=l^.sig;
+end;
+
+{d. Modifique el módulo Sublista del inciso anterior, suponiendo que la lista L se encuentra ordenada de manera
+ascendente.}
+{e. Modifique el módulo Sublista del inciso anterior, suponiendo que la lista L se encuentra ordenada de manera
+descendente}
+
+
+var
+    pri : lista;
+    valor : integer;
+begin
+    pri := nil;
+    writeln('Ingrese un numero');
+    readln(valor);
+    while (valor <> 0) do begin
+        armarNodo(pri, valor);
+        writeln('Ingrese un numero');
+        readln(valor);
+    end;
+    if (estaOrdenada(pri)) then
+        writeln('ESTA ORDENADA')
+    else
+        writeln('NO ESTA ORDENADA');
+ { imprimir lista }
+ readln;
+end.
+
+{10. Una empresa de sistemas está desarrollando un software para organizar listas de espera de clientes. Su
+funcionamiento es muy sencillo: cuando un cliente ingresa al local, se registra su DNI y se le entrega un número
+(que es el siguiente al último número entregado). El cliente quedará esperando a ser llamado por su número,
+en cuyo caso sale de la lista de espera. Se pide:
+a. Definir una estructura de datos apropiada para representar la lista de espera de clientes.
+b. Implementar el módulo RecibirCliente, que recibe como parámetro el DNI del cliente y la lista de clientes
+en espera, asigna un número al cliente y retorna la lista de espera actualizada.
+c. Implementar el módulo AtenderCliente, que recibe como parámetro la lista de clientes en espera, y retorna
+el número y DNI del cliente a ser atendido y la lista actualizada. El cliente atendido debe eliminarse de la lista
+de espera.
+d. Implementar un programa que simule la atención de los clientes. En dicho programa, primero llegarán todos
+los clientes juntos, se les dará un número de espera a cada uno de ellos, y luego se los atenderá de a uno por
+vez. El ingreso de clientes se realiza hasta que se lee el DNI 0, que no debe procesarse.}
+program Hello;
+type
+    cliente= record
+        dni:integer;
+        numero:integer;
+    end;
+    
+    lista= ^nodo;
+    
+    nodo= record
+        dato:cliente;
+        sig:lista;
+    end;
+procedure AtenderCliente(var l:lista; var c:cliente);
+var
+  aux:lista;
+begin
+    c.dni:= l^.dato.dni; //le asigno al cliente su dni y numero en la lista 
+    c.numero:=l^.dato.numero;
+    aux:= l;
+    l:= l^.sig; // me muevo a la segunda posicion
+    dispose(aux); //elimino el que ya atendi
+end;
+
+procedure agregarAtras (dni,num:integer; var l,ult:lista);
+var
+    nue:lista;
+begin
+    new(nue); //reservo espacio en la heap
+    nue^.dato.dni:=dni; //cargo el dni
+    nue^.dato.numero:= num; //cargo el numero
+    nue^.sig:=nil; //inicializo el enlace a nil
+    if (l <> nil) then //si la lista está vacía
+        ult^.sig:= nue
+    else
+        l:= nue; //cc
+    ult:= nue; //actualizo el último con el nuevo nodo
+end;
+procedure recibirCliente(var l,ult:lista; cd:integer);
+begin
+    if ( l = nil ) then //ubico el primero
+        agregarAtras(cd,1,l,ult)
+    else agregarAtras(cd,ult^.dato.numero+1,l,ult); //ubico los demas
+end;
+procedure cargarListaClientes (var l,ult:lista);
+var
+    cli:cliente;
+begin
+    writeln('DNI CLIENTE:');
+    readln(cli.dni); //leo el dni del cliente
+    while (cli.dni <> 0 ) do begin //mientras su dni no sea 0
+        recibirCliente(l,ult, cli.dni);
+        writeln('DNI CLIENTE:');
+        readln(cli.dni);
+    end;
+end;
+procedure recorrerLista(l:lista);
+var
+    cli:cliente;
+begin
+    while (l<> nil) do begin //mientras hay cliente, atiendo
+        AtenderCliente(l,cli);
+        writeln('cliente:',cli.dni, 'con numero asignado:', l^.dato.numero);
+        l:=l^.sig;
+    end;
+end;
+var
+    l,ult:lista;
+begin
+    l:=nil;
+    ult:=nil;
+    cargarListaClientes(l,ult);
+    recorrerLista(l);
+end.
+
+{11. La Facultad de Informática debe seleccionar los 10 egresados con mejor promedio a los que la UNLP les
+entregará el premio Joaquín V. González. De cada egresado se conoce su número de alumno, apellido y el
+promedio obtenido durante toda su carrera.
+Implementar un programa que:
+a. Lea la información de todos los egresados, hasta ingresar el código 0, el cual no debe procesarse.
+b. Una vez ingresada la información de los egresados, informe el apellido y número de alumno de los egresados
+que recibirán el premio. La información debe imprimirse ordenada según el promedio del egresado (de mayor
+a menor).}
+program Hello;
+const
+    dimF = 10;
+type
+    rangoVecAlu = 1..dimF;
+    cadena20 = string[20];
+    alumno = record
+        nroAlu: integer;
+        apellido:cadena20;
+        promedio:real;
+    end;
+    
+    lista = ^nodo;
+    nodo = record
+        dato: alumno;
+        sig:lista;
+    end;
+
+procedure imprimirLista(l:lista);
+var
+    i:integer;
+begin
+    i:=0;
+   while (l<> nil) and (i < 10) do begin
+            writeln('Apellido con buen promedio:', l^.dato.apellido);
+            writeln('Nro de alumno:', l^.dato.nroAlu);
+            l:=l^.sig;
+            i:=i+1;
+    end;
+end;
+procedure insertarOrdenado (var l:lista; alu:alumno);
+var
+    ant,act,nue:lista;
+begin
+    new(nue); //pido espacio en memoria para el nuevo nodo
+    nue^.dato:=alu; // cargo el nodo
+    ant:=l;
+    act:=l;
+    while (act <> nil) and (act^.dato.promedio > alu.promedio) do begin
+        ant:=act;
+        act:=act^.sig;
+    end;
+    if (ant = act) then
+        l:=nue //el dato va al principio
+    else
+        ant^.sig:=nue; //va entre otros nodos o al final
+    nue^.sig:=act;
+end;
+procedure leerAlumno (var alu:alumno);
+begin
+    with alu do begin
+        writeln('NRO ALUMNO:');
+        readln(nroAlu);
+        if (nroAlu <> 0) then begin
+            writeln('APELLIDO:');
+            readln(apellido);
+            writeln('PROMEDIO:');
+            readln(promedio);
+        end;
+    end;
+end;
+procedure cargarAlumnos (var pri:lista);
+var 
+    alu:alumno;
+begin
+    leerAlumno(alu);
+    while (alu.nroAlu <> 0) do begin
+        insertarOrdenado(pri,alu);
+        leerAlumno(alu);
+    end;
+end;
+var
+    l:lista;
+begin
+    l:=nil;
+    cargarAlumnos(l);
+    imprimirLista(l);
+end.
+
+{12. Una empresa desarrolladora de juegos para teléfonos celulares con Android dispone de información de
+todos los dispositivos que poseen sus juegos instalados. De cada dispositivo se conoce la versión de Android
+instalada, el tamaño de la pantalla (en pulgadas) y la cantidad de memoria RAM que posee (medida en GB). 
+ La información disponible se encuentra ordenada por versión de Android. Realizar un programa que procese la
+información disponible de todos los dispositivos e informe:
+a. La cantidad de dispositivos para cada versión de Android.
+b. La cantidad de dispositivos con más de 3 GB de memoria y pantallas de a lo sumo a 5 pulgadas.
+c. El tamaño promedio de las pantallas de todos los dispositivos. 
+al menos -> como minimo 
+a lo sumo -> como maximo
+
+}
+program Hello;
+const
+    minimoGB =3;
+    maximopulgada = 5;
+type
+    dispositivo = record
+        version:real;
+        tamPantalla:integer;
+        cantMemoria:real;
+    end;
+    
+    lista= ^nodo;
+    nodo = record
+        dato:dispositivo;
+        sig:lista;
+    end;
+function calcularPromedio(totalTamPant:integer;cantDispositivos:integer):real;
+begin
+    calcularPromedio:= totalTamPant / cantDispositivos;
+end;
+function CumpleMemYPant (cantidadMemoria:real; tamanioPantalla:integer):integer;
+begin
+    if (cantidadMemoria > minimoGB) and (tamanioPantalla <= maximopulgada) then
+        CumpleMemYPant:=1
+    else
+        CumpleMemYPant:=0;
+end;
+procedure recorrerLista (l:lista);
+var
+    cantDispxVersion,cantDispxMemPant,cantDispositivos,totalTamPant:integer;
+    promedio,versionActual:real;
+begin
+    cantDispositivos:=0;
+    totalTamPant:=0;
+    cantDispxMemPant:=0;
+    while (l <> nil) do begin
+        cantDispositivos:=cantDispositivos+1;
+        totalTamPant:=totalTamPant+l^.dato.tamPantalla;
+        cantDispxVersion:= 0; 
+        versionActual:=l^.dato.version;
+        while (l<>nil) and (versionActual = l^.dato.version) do begin
+            cantDispxVersion:=cantDispxVersion+1;
+        end;
+        writeln('Cantidad de dispositivos para la versión ',versionActual,' de Android: ',cantDispxVersion); //revisar
+        cantDispxMemPant:=cantDispxMemPant+CumpleMemYPant(l^.dato.cantMemoria,l^.dato.tamPantalla);
+        l:=l^.sig;
+        promedio:=calcularPromedio(totalTamPant,cantDispositivos);
+    end;
+    writeln('Cantidad de dispositivos con más de 3 GB de memoria y pantallas de a lo sumo a 5 pulgadas.',cantDispxMemPant);
+    writeln('Tamaño promedio de las pantallas de todos los dispositivos. ',promedio:2:2);
+end;
+
+var
+    l,ult:lista;
+begin
+    l:=nil;
+    ult:=nil;
+    cargarLista(l,ult); //se dispone (debería tener un agregarAtras)
+    recorrerLista(l);
+end.
+
+{13. El Portal de Revistas de la UNLP está estudiando el uso de sus sistemas de edición electrónica por parte de
+los usuarios. Para ello, se dispone de información sobre los 3600 usuarios que utilizan el portal. De cada usuario
+se conoce su email, su rol (1: Editor; 2. Autor; 3. Revisor; 4. Lector), revista en la que participa y cantidad de
+días desde el último acceso.
+a. Imprimir el nombre de usuario y la cantidad de días desde el último acceso de todos los usuarios de la revista
+Económica. El listado debe ordenarse a partir de la cantidad de días desde el último acceso (orden ascendente).
+b. Informar la cantidad de usuarios por cada rol para todas las revistas del portal.
+c. Informar los emails de los dos usuarios que hace más tiempo que no ingresan al portal.}
+program Hello;
+const
+    dimF = 3600;
+type
+    rangoRol = 1..4;
+    cadena15 = string[15];
+    rangoVec= 1..dimF;
+    
+    usuario = record
+        email:cadena15;
+        rol: rangoRol;
+        revistaPart:cadena15;
+        cantDiasUltAcc:integer;
+    end;
+    
+    vec_usuarios = array [rangoVec] of usuario;
+    vec_roles = array[rangoRol] of integer;
+    
+    lista = ^nodo; 
+    nodo=record
+        dato:usuario;
+        sig:lista;
+    end;
+procedure informar (l:lista;vr:vec_roles);
+var
+    i:integer;
+begin
+    while (l<> nil) do begin
+        writeln('El usuario: ', l^.dato.email, 'ingreso por ultima vez hace: ',l^.dato.cantDiasUltAcc);
+        l:=l^.sig;
+    end;
+    for i:=1 to 4 do
+        writeln('Para el rol: ',i,' hubo ', vr[i],' usuarios');
+end;
+procedure actualizarMaximos(emailActual:cadena15; cant_dias:integer; var maximo1,maximo2:integer; var email1,email2:cadena15);
+begin
+    if (cant_dias > maximo1) then begin
+        maximo2:=maximo1;
+        maximo1:=cant_dias;
+        email2:=email1;
+        email1:=emailActual;
+    end
+    else
+        if(cant_dias > maximo2) then begin
+            cant_dias:=maximo2;
+            email2:=emailActual;
+        end;
+end;
+
+procedure insertarOrdenado(var l:lista; u:usuario);
+var
+    nue,ant,act:lista;
+begin
+    new(nue);
+    nue^.dato:=u;
+    ant:=l;
+    act:=l;
+    while((act <> nil ) and (act^.dato.cantDiasUltAcc < u.cantDiasUltAcc )) do begin
+        ant:= act;
+        act:= act^.sig;
+    end;
+    if (act = ant) then 
+        l:=nue {va al principio}
+    else
+        ant^.sig  := nue; {va entre otros dos o al final}
+    nue^.sig := act;
+end;   
+
+procedure recorrerVector (v:vec_usuarios; var l:lista; var vr:vec_roles);
+var 
+    i: integer;
+    email1,email2:cadena15;
+    maximo1,maximo2:integer;
+begin
+    maximo1:=-1;
+    maximo2:=-1;
+    for i:=1 to dimF do begin
+        if(v[i].revistaPart = 'ECONOMICA') then
+            insertarOrdenado(l,v[i]);
+        vr[v[i].rol]:=vr[v[i].rol]+1;
+        actualizarMaximos(v[i].email,v[i].cantDiasUltAcc,maximo1,maximo2, email1,email2);
+    end;
+    writeln(email1,' y ', email2,' son los dos usuarios que hace más tiempo que no ingresan al portal.');
+end;
+
+procedure inicializarVContador (var vr:vec_roles);
+var 
+    i:integer;
+begin
+    for i:=1 to 4 do
+        vr[i]:=0;
+end;
+var
+    l: lista;
+    vec: vec_usuarios;
+    vr: vec_roles;
+begin
+    l:=nil;
+    cargarVector(vec); //se dispone
+    inicializarVContador(vr);
+    recorrerVector(vec,l,vr);
+    informar(l,vr);
+end.
+
+
+
+
