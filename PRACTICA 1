@@ -1,0 +1,225 @@
+{1-Realizar un programa que lea 2 números enteros desde teclado e informe en pantalla cuál de los
+dos números es el mayor. Si son iguales debe informar en pantalla lo siguiente: “Los números leídos
+son iguales”}
+program Hello;
+var
+    num1, num2:integer;
+begin
+    writeln ('Ingrese un número:');
+    readln(num1);
+    writeln ('Ingrese otro número:');
+    readln(num2);
+    If (num1 > num2) then
+        writeln ('El primer numero es mas grande')
+    else 
+        if (num2 > num1) then
+        writeln ('El segundo numero es mas grande')
+    else writeln ('Los números leídos son iguales');
+end.
+
+
+{2- Realizar un programa que lea un número real e imprima su valor absoluto. El valor absoluto de un
+número X, se escribe |X| y se define como:
+|X| = X cuando X es mayor o igual a cero
+|X| = -X cuando X es menor a cero}
+program Hello;
+var num1:real;
+begin
+    writeln ('Ingrese un valor:');
+    readln(num1);
+    if (num1 >= 0) then
+        writeln('Es mayor o igual a cero:',num1)
+    else if (num1 < 0) then
+        writeln('Es menor a cero:',num1*(-1));
+end.
+
+{3. Realizar un programa que lea 3 números enteros y los imprima en orden descendente.
+Por ejemplo, si se ingresan los valores 4, -10 y 12, deberá imprimir:
+12 4 -10}
+program Hello;
+var
+    num1,num2,num3:integer;
+begin
+  writeln ('Ingrese el primer valor:');
+  readln(num1);
+  writeln ('Ingrese el segundo valor:');
+  readln(num2);
+  writeln ('Ingrese el tercer valor:');
+  readln(num3);
+    If (num3 > num2) then
+      if (num3>num1) then
+        if (num1>num2) then
+            writeln ('el orden es:', num3,' ',num1,' ',num2)
+        else writeln('el orden es:',num3,' ',num2,' ', num1)
+      else if (num1>num2)then
+        writeln('el orden es:',num1,' ',num3,' ', num2)
+    else if (num3>num1)then
+            if (num2>num1) then
+            writeln ('el orden es:', num2,' ',num3,' ',num1)
+        else
+            if(num1>num2) then
+                writeln ('el orden es:', num1,' ',num2,' ', num3)
+            else writeln ('el orden es:', num2,' ',num1,' ', num3)
+end.
+
+{4- Realizar un programa que lea un número real X. Luego, deberá leer números reales hasta que se
+ingrese uno cuyo valor sea exactamente el doble de X (el primer número leído)}
+program Hello;
+var   
+    num,x:real;
+begin
+    writeln('Ingrese un valor:');
+    readln(x);
+    writeln('Ingrese un numero:');
+    readln(num);
+    while (num <> x*2) do begin
+        writeln('Ingrese un numero:');
+        readln(num);
+    end;
+    writeln('Ingresaste el doble del valor.');
+end.
+
+{5- Modifique el ejercicio anterior para que, luego de leer el número X, se lean a lo sumo 10 números
+reales. La lectura deberá finalizar al ingresar un valor que sea el doble de X, o al leer el décimo
+número, en cuyo caso deberá informarse “No se ha ingresado el doble de X”.
+
+}
+program Hello;
+const
+    maximo=10;
+var 
+    num,x:real;
+    cantidad:integer;
+begin
+    cantidad:=1;
+    writeln('Ingrese un valor:');
+    readln(x);
+    writeln('Ingrese un numero:');
+    readln(num);
+    while ((cantidad <= maximo ) and (num <> x*2)) do begin
+        cantidad:=cantidad+1;
+        writeln('Ingrese un numero:');
+        readln(num);
+    end;
+    if (cantidad = maximo) and (num <> x*2) then
+        writeln('ingresaste 10 numeros')
+    else if (num <> x*2) then writeln('Ingresaste el doble del valor.');
+end.
+{6- Realizar un programa que lea el número de legajo y el promedio de cada alumno de la facultad. La
+lectura finaliza cuando se ingresa el legajo -1, que no debe procesarse.
+    Al finalizar la lectura, informar:
+○ La cantidad de alumnos leída (en el ejemplo anterior, se debería informar 2)
+○ La cantidad de alumnos cuyo promedio supera 6.5 (en el ejemplo anterior, se debería informar
+1)
+○ El porcentaje de alumnos destacados (alumnos con promedio mayor a 8.5) cuyo legajo sean
+menor al valor 2500 (en el ejemplo anterior se debería informar 0%).
+
+}
+program Hello;
+const
+    sup=6.5;
+    dest=8.5;
+var
+    numlegajo, cantAlu,cantSup,aluDest:integer;
+    promedio, porcentdestac:real;
+begin
+    cantAlu:=0;
+    cantSup:=0;
+    aluDest:=0;
+    writeln ('NUMERO DE ALUMNO:');
+    readln(numlegajo);
+    while (numlegajo <> -1) do begin
+        cantAlu:=cantAlu+1;
+        writeln ('PROMEDIO:');
+        readln(promedio);
+        If (promedio > sup) then
+            cantSup:=cantSup+1;
+        If (promedio > dest) and (numlegajo < 2500) then begin
+            aluDest:=aluDest+1;
+        end;
+        writeln ('NUMERO DE ALUMNO:');
+        readln(numlegajo);
+    end;
+    porcentdestac:=aluDest*100/cantAlu;
+    writeln('La cantidad de alumnos leída fue:',cantAlu);
+    writeln('La cantidad de alumnos cuyo promedio supera 6.5:',cantSup);
+    writeln('El porcentaje de alumnos destacados cuyo legajo sean menor al valor 2500:',porcentdestac:2:2,'%');
+end.
+
+{7-Realizar un programa que lea el código, el precio actual y el nuevo precio de los productos de un
+almacén. La lectura finaliza al ingresar el producto con el código 32767, el cual debe procesarse.
+Para cada producto leido, el programa deberá indicar si el nuevo precio del producto supera en un
+10% al precio anterior.}
+program Hello;
+var
+    codigo:integer;
+    preAct,preNue:real;
+    
+begin
+    repeat
+    writeln ('CODIGO:');
+    readln(codigo);
+    writeln ('PRECIO ACTUAL:');
+    readln(preAct);
+    writeln ('PRECIO NUEVO:');
+    readln(preNue);
+    if (preAct*1.1 < preNue)then
+        writeln('el aumento de precio del producto', codigo,' es superior al 10%')
+        else writeln('el aumento de precio del producto', codigo,' no es superior al 10%');
+    until (codigo = 32767);
+end.
+
+{8-Realizar un programa que lea tres caracteres, e informe si los tres eran letras vocales o si al menos
+uno de ellos no lo era. Por ejemplo, si se leen los caracteres “a e o” deberá informar “Los tres son
+vocales”, y si se leen los caracteres “z a g” deberá informar “al menos un carácter no era vocal”.}
+program Hello;
+var
+    car1,car2,car3:char;
+    vocal1,vocal2,vocal3:boolean;
+begin
+    writeln ('Ingrese el primer caracter:');
+    readln(car1);
+    writeln ('Ingrese el segundo caracter:');
+    readln(car2);
+    writeln ('Ingrese el tercer caracter:');
+    readln(car3);
+    vocal1:= (car1 ='a') or (car1 ='e') or (car1 ='i') or (car1 ='o') or (car1 ='u') or (car1 ='A') or (car1 ='E') or(car1 ='I') or(car1 ='O') or (car1 ='U');
+    vocal2:= (car2 ='a') or (car2 ='e') or (car2 ='i') or (car2 ='o') or (car2 ='u') or (car2 ='A') or (car2 ='E') or(car2 ='I') or(car2 ='O') or (car2 ='U');
+    vocal3:= (car3 ='a') or (car3 ='e') or (car3 ='i') or (car3 ='o') or (car3 ='u') or (car3 ='A') or (car3 ='E') or(car3 ='I') or(car3 ='O') or (car3 ='U');
+    if (vocal1 and vocal2 and vocal3) then 
+        writeln ('Los tres eran vocales')
+    else
+        writeln ('Al menos uno no era vocal');
+end.
+{9-Realizar un programa que lea un carácter, que puede ser “+” (suma) o “-” (resta); si se ingresa otro
+carácter, debe informar un error y finalizar. Una vez leído el carácter de suma o resta, deberá leerse
+una secuencia de números enteros que finaliza con 0. El programa deberá aplicar la operación leída
+con la secuencia de números, e imprimir el resultado final.
+Por ejemplo:
+○ Si se lee el carácter “-” y la secuencia 4 3 5 -6 0 , deberá imprimir: 2 (4 – 3 – 5 - (-6) )
+○ Si se lee el carácter “+” y la secuencia -10 5 6 -1 0, deberá imprimir 0 ( -10 + 5 + 6 + (-1) )}
+program Hello;
+var
+    car:char;
+    num, total:integer;
+begin
+    total:=0;
+    writeln ('Ingresar un caracter de suma o resta');
+    readln(car);
+    if ((car ='+') or (car='-')) then begin
+        writeln ('Ingresar un numero:');
+        readln(num);
+        while (num <> 0) do begin
+            if (car = '+') then
+                total:=total+num
+            else if (car='-')  then
+                total:= total-num;
+        writeln ('Ingresar un numero:');
+        readln(num);
+        end;
+        writeln('RESULTADO FINAL:', total);
+    end
+    else writeln('¡ERROR! ingresaste otro caracter.');
+end.
+
+
