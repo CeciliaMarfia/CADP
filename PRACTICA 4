@@ -1,0 +1,967 @@
+{ a) ¿Qué valores toma la variable numeros al finalizar el primer bloque for?
+b) Al terminar el programa, ¿con qué valores finaliza la variable números?
+c) Si se desea cambiar la línea 11 por la sentencia: for i:=1 to 9 do ¿Cómo debe modificarse el
+código para que la variable números contenga los mismos valores que en 1.b)?
+d) ¿Qué valores están contenidos en la variable numeros si la líneas 11 y 12 se reemplazan por:
+for i:=1 to 9 do
+numeros[i+1] := numeros[i]; 
+program sumador;
+  type
+    vnums = array [1..10] of integer;
+  var
+    numeros : vnums;
+    i : integer;
+  begin
+    for i:=1 to 10 do {primer bloque for}
+{       numeros[i] := i;
+    for i := 2 to 10 do {segundo bloque for}
+{       numeros[i] := numeros[i] + numeros [i-1]
+  end.}
+//
+{2- Dado el siguiente programa, complete las líneas indicadas, considerando que:
+a) El módulo cargarVector debe leer números reales y almacenarlos en el vector que se pasa como
+parámetro. Al finalizar, debe retornar el vector y su dimensión lógica. La lectura finaliza cuando se ingresa
+el valor 0 (que no debe procesarse) o cuando el vector está completo.
+b) El módulo modificarVectorySumar debe devolver el vector con todos sus elementos incrementados con
+el valor n y también debe devolver la suma de todos los elementos del vector. }
+program Vectores;
+const
+    cant_datos = 150;
+type
+    vdatos = array[1..cant_datos] of real;
+procedure cargarVector(var v:vdatos; var dimL : integer);
+var
+    nreal:real;
+begin
+    writeln('Ingrese un numero real:');
+    readln(nreal);
+    while (nreal <> 0) and (dimL < cant_datos) do begin
+        dimL:= dimL+1; //voy cargando la dimL
+        v[dimL]:=nreal; //asigno el valor leído en esa posición del vector...
+        writeln('Ingrese un numero real:');
+        readln(nreal);
+        
+    end;
+end;
+procedure modificarVectorySumar(var v:vdatos; dimL : integer; n: real; var suma: real);
+var
+    i:integer;
+begin
+    for i:= 1 to dimL do begin
+        v[i]:= v[i] + n;
+        suma:= suma+ v[i];
+    end;
+end;
+var
+    datos : vdatos;
+    i, dim : integer;
+    num, sumaTotal : real;
+begin
+    dim := 0;  //inicializo la dimL
+    sumaTotal := 0;
+    cargarVector(datos, dim);
+    writeln('Ingrese un valor a sumar');
+    readln(num);
+    modificarVectorySumar(datos, dim, num, sumaTotal);
+    writeln('La suma de los valores es: ', sumaTotal);
+    writeln('Se procesaron: ',dim, ' números');
+end.
+{3. Se dispone de un vector con números enteros, de dimensión física dimF y dimensión lógica dimL.
+d) Realizar un módulo que reciba el vector, una posición X y otra posición Y, e imprima el vector desde la
+posición X hasta la Y. Asuma que tanto X como Y son menores o igual a la dimensión lógica. Y considere
+que, dependiendo de los valores de X e Y, podría ser necesario recorrer hacia adelante o hacia atrás.
+e) Utilizando el módulo implementado en el inciso anterior, vuelva a realizar los incisos a, b y c.}
+program Hello;
+const
+    //dimF=;
+type
+    //vector_numeros = array [] of integer;
+//a) Realizar un módulo que imprima el vector desde la primera posición hasta la última.
+procedure imprimirVec(v:vector_numeros; dimL:integer);
+var
+    i:integer;
+begin
+    for i:= 1 to dimL do
+    writeln('En la posición' , i, 'contiene:', v[i]);
+end;
+
+//b) Realizar un módulo que imprima el vector desde la última posición hasta la primera.
+procedure imprimirVecAlreves(v:vector_numeros; dimL:integer);
+var
+    i:integer;
+begin
+    for i:=dimL downto 1 do
+    writeln('En la posición' , i, 'contiene:', v[i]);
+end;
+//c) Realizar un módulo que imprima el vector desde la mitad (dimL DIV 2) hacia la primera posición, y
+//desde la mitad más uno hacia la última posición.
+procedure imprimirMitadVec (v:vector_numeros; dimL:integer);
+var
+    i: integer;
+begin
+    for i:= (dimL div 2) downto 1 do
+        writeln('Desde la mitad hacia la primer posición',i,  'contiene:', v[i]);
+
+    for i:= ((dimL div 2)+1) to dimL do
+        writeln('desde la mitad más uno hacia la última posición contiene:', v[i]);
+end;
+
+{d) Realizar un módulo que reciba el vector, una posición X y otra posición Y, e imprima el vector desde la
+posición X hasta la Y. Asuma que tanto X como Y son menores o igual a la dimensión lógica. Y considere
+que, dependiendo de los valores de X e Y, podría ser necesario recorrer hacia adelante o hacia atrás}  
+procedure imprimirXY (v: vector_numeros; x,y:integer);
+var
+    i:=integer;
+begin
+    If (x > y) then begin
+        for i:= x to y do
+        writeln('El contenido es', v[i]);
+    end
+    else (y > x) then begin
+            for x downto i:= y do
+            writeln('El contenido en', v[i]);
+    end;
+end;    
+var
+    v:vector_numeros;
+    dimL,x,y:integer;
+begin
+    dimL:=0;
+    cargarVector(v, dimL); //se dispone
+    imprimirVec(v,dimL);
+    imprimirVecAlreves(v,dimL);
+    imprimirMitadVec(v,dimL);
+    imprimirXY(v,x,y);
+end. //CREO QUE FALTA EL E
+
+{5-Utilizando los módulos implementados en el ejercicio 3, realizar un programa que lea números enteros
+desde teclado (a lo sumo 100) y los almacene en un vector. La carga finaliza al leer el número 0. Al finalizar
+la carga, se debe intercambiar la posición del mayor elemento por la del menor elemento, e informe la
+operación realizada de la siguiente manera: “El elemento máximo ... que se encontraba en la posición ...
+fue intercambiado con el elemento mínimo ... que se encontraba en la posición ...”}
+program Hello;
+const
+    //dimF = 100;
+    dimF = 5;
+type
+    rangoDimL=0..dimF;
+    rangoVec = 1..dimF;
+    vectorNumeros = array [rangoVec] of integer;
+function elementoMaximo (v:vectorNumeros; dimL:rangoDimL): rangoVec;
+var
+    indicemax:rangoVec;
+    i, max:integer;
+begin
+    max:=-1;
+    for i:=1 to dimL do begin
+        If(v[i] > max) then begin //si, el valor en la pos i es mayor a max, entonces
+            max:= v[i]; //le asigno a max el contenido en la posicion i del vector
+            indicemax:= i; //a indicemax le indico la posicion donde está ese contenido máximo
+        end;
+    end;
+    elementoMaximo:= indicemax; //retorno la posicion donde está el contenido máximo
+end;
+
+function elementoMinimo (v:vectorNumeros; dimL:rangoVec): rangoVec;
+var
+    i,min:integer;
+    indicemin:rangoVec;
+begin
+    min:=999;
+    for i:=1 to dimL do begin 
+        If(v[i] < min) then begin //si, el valor en la pos i es menor a min, entonces
+            min:= v[i]; //le asigno a min el contenido en la posicion i del vector
+            indicemin:= i;  //a indicemin le indico la posicion donde está ese contenido minimo
+        end;
+    end;
+    elementoMinimo:=indicemin; //retorno la posicion donde está el contenido mínimo
+end;
+
+procedure intercambiar (var v: vectorNumeros; elemMax, elemMin:rangoDimL); 
+var
+    aux:integer;
+begin
+    aux:= v[elemMax];
+    v[elemMax] := v[elemMin];
+    v[elemMin] := aux;
+    writeln('El elemento máximo ', v[elemMin],' que se encontraba en la posición ', elemMin, 'fue intercambiado con el elemento mínimo ',v[elemMax],' que se encontraba en la posición ' ,elemMax);
+end;
+procedure cargarVec (var v:vectorNumeros; var dimL:rangoDimL);
+var
+    num:integer;
+begin   
+    dimL:=0;
+    writeln('Ingrese un numero entero:');
+    readln(num);
+    while (num <> 0) and (dimL < dimF) do begin
+        dimL:=dimL+1;
+        v[dimL]:= num;
+        writeln('Ingrese un numero entero:');
+        readln(num);
+    end;
+end;
+var
+    v:vectorNumeros;
+    dimL,posMayor,posMenor: rangoDimL;
+begin
+  cargarVec(v,dimL);
+  posMayor:= elementoMaximo(v,dimL);
+  posMenor:= elementoMinimo(v,dimL);
+  intercambiar (v,posMayor,posMenor);
+end.
+
+{7. Realizar un programa que lea números enteros desde teclado hasta que se ingrese el valor -1 (que no
+debe procesarse) e informe:
+a. la cantidad de ocurrencias de cada dígito procesado.
+b. el dígito más leído.
+c. los dígitos que no tuvieron ocurrencias.}
+program Hello;
+const
+    dimF = 9;
+type
+    rangovec = 0..dimF;
+    vec_enteros = array [rangovec] of integer;
+
+procedure inicializarContador (var v:vec_enteros);
+var 
+    i:rangovec;
+begin
+    for i:=0 to dimF do
+        v[i]:=0;
+end;
+procedure descomponer (var v:vec_enteros; num:integer);
+var 
+    resto:rangovec;
+begin
+    while (num <> 0) do begin
+        resto:= num mod 10; {obtengo el digito}
+        v[resto]:= v[resto] + 1; {incremento contador asociado al dígito}
+        num:= num div 10;
+    end;
+end;
+procedure actualizarMaximo (num:integer; var max,pos:integer; i:integer);
+begin
+    if (num>max) then begin
+         max := num;
+         pos := i;
+    end;
+end;  
+procedure imprimir (v:vec_enteros);
+var
+    i,max, pos:integer;
+begin
+    max:=-1;
+    pos:=-1;
+    for i:=0 to 9 do begin
+        actualizarMaximo(v[i],max,pos,i);
+        if (v[i] = 0) then
+            writeln('El digito ', i, ' no tuvo ocurrencias')
+        else
+           writeln ('el ', i,' ocurrió ',v[i],' veces.');
+    end;
+    writeln ('el dígito más leído fue: ', pos);
+end; 
+var
+    v:vec_enteros;
+    num:integer;
+begin
+    inicializarContador(v);
+    writeln ('Ingrese un numero:');
+    readln(num);
+    while (num <> -1) do begin
+        descomponer(v,num);
+        writeln ('Ingrese un numero:');
+        readln(num);
+    end;
+    imprimir(v);
+end.
+
+{8-Realizar un programa que lea y almacene la información de 400 alumnos ingresantes a la Facultad de
+Informática de la UNLP en el año 2020. De cada alumno se lee: nro de inscripción, DNI, apellido, nombre y
+año de nacimiento. Una vez leída y almacenada toda la información, calcular e informar:
+a) El porcentaje de alumnos con DNI compuesto sólo por dígitos pares.
+b) Apellido y nombre de los dos alumnos de mayor edad.}
+program Hello;
+const
+    dimF = 3;//400 puse 3 para probar
+type
+    rango = 1..dimF;
+    cadena15 = string[15];
+    alumno = record
+        nroInsc:integer;
+        dni:integer;
+        ape:cadena15;
+        nom:cadena15;
+        anionac:integer;
+    end;
+    vec_alumnos= array [rango] of alumno;
+procedure masViejos(anioAnalizado:integer; apeAct, nomAct:cadena15; var anio1,anio2: integer; var apeViejo1,nomViejo1,apeViejo2,nomViejo2:cadena15);
+begin
+    if(anioAnalizado < anio1) then begin
+        anio2:= anio1;
+        apeViejo2:= apeViejo1;
+        nomViejo2:= nomViejo1;
+        anio1:= anioAnalizado;
+        apeViejo1:= apeAct;
+        nomViejo1:= nomAct;
+    end
+    else
+        if( anioAnalizado < anio2) then begin
+            apeViejo2:= apeAct;
+            nomViejo2:= nomAct;
+            anio2:= anioAnalizado;
+        
+        end;
+end;
+
+function calcularPorcentaje (cantPares:integer):real;
+begin
+    calcularPorcentaje:= (cantPares/dimF) *100;
+end;
+function soloDigPares (num:integer): integer;
+var 
+    dig:integer;
+    esPar:boolean;
+begin
+    esPar:=true;
+    while (num <> 0) and (esPar) do begin
+        dig := num mod 10;
+        if ((dig mod 2) = 0) then
+            num:= num div 10
+        else
+            esPar:=false;
+        end;
+    if (esPar) then 
+        soloDigPares:= 1
+    else soloDigPares:= 0;
+        
+end;
+procedure leerAlumno (var a:alumno);
+begin
+    with a do begin
+        writeln('NRO INSCRIPCION:');
+        readln(nroInsc);
+        writeln('DNI:');
+        readln(dni);
+        writeln('APELLIDO:');
+        readln(ape);
+        writeln('NOMBRE:');
+        readln(nom);
+        writeln('ANIO DE NACIMIENTO:');
+        readln(anionac);
+    end;
+end;
+procedure cargarAlumnos(var v:vec_alumnos);
+var
+    i:integer;
+    alu:alumno;
+begin
+    for i:=1 to dimF do begin 
+        leerAlumno(alu);
+        v[i]:=alu;
+    end;
+end;
+var
+    v:vec_alumnos;
+    i,cantPares, anio1,anio2:integer;
+    porcentaje:real;
+    apeViejo1,apeViejo2,nomViejo1,nomViejo2:cadena15;
+begin
+    anio1:=9999;
+    anio2:=999;
+    cantPares:=0; //inicializo en 0 el contador de pares
+    cargarAlumnos(v); //cargo el vector de alumnos
+    for i:=1 to dimF do begin    
+        cantPares:= cantPares +soloDigPares(v[i].dni); //si era par me suma 1
+        masViejos(v[i].anionac,v[i].ape,v[i].nom,anio1,anio2,apeViejo1,nomViejo1,apeViejo2,nomViejo2);
+    end;
+    porcentaje:= calcularPorcentaje(cantPares); 
+    writeln('Porcentaje de alumnos con DNI compuesto sólo por dígitos pares: ', porcentaje:2:2, '%');
+    writeln('Apellido y nombre de los dos alumnos de mayor edad edad son:', apeViejo1 , nomViejo1,' y ', apeViejo2 , nomViejo2);
+end.
+
+{9-Modificar la solución del punto anterior considerando que el programa lea y almacene la información de a
+lo sumo 400 alumnos. La lectura finaliza cuando se ingresa el DNI -1 (que no debe procesarse).}
+program Hello;
+const
+    dimF = 3;//400
+type
+    rango = 1..dimF;
+    cadena15 = string[15];
+    alumno = record
+        nroInsc:integer;
+        dni:integer;
+        ape:cadena15;
+        nom:cadena15;
+        anionac:integer;
+    end;
+    vec_alumnos= array [rango] of alumno;
+procedure masViejos(anioAnalizado:integer; apeAct, nomAct:cadena15; var anio1,anio2: integer; var apeViejo1,nomViejo1,apeViejo2,nomViejo2:cadena15);
+begin
+    if(anioAnalizado < anio1) then begin
+        anio2:= anio1;
+        apeViejo2:= apeViejo1;
+        nomViejo2:= nomViejo1;
+        anio1:= anioAnalizado;
+        apeViejo1:= apeAct;
+        nomViejo1:= nomAct;
+    end
+    else
+        if( anioAnalizado < anio2) then begin
+            apeViejo2:= apeAct;
+            nomViejo2:= nomAct;
+            anio2:= anioAnalizado;
+        
+        end;
+end;
+
+function calcularPorcentaje (cantPares:integer; dimL:rango):real;
+begin
+    calcularPorcentaje:= (cantPares/dimL) *100;
+end;
+function soloDigPares (num:integer): boolean;
+var 
+    dig:integer;
+    esPar:boolean;
+begin
+    esPar:=true;
+    while (num <> 0) and (esPar) do begin
+        dig := num mod 10;
+        if ((dig mod 2) = 0) then
+            num:= num div 10
+        else
+            esPar:=false;
+        end;
+    soloDigPares:=esPar;
+        
+end;
+procedure leerAlumno (var a:alumno);
+begin
+    with a do begin
+        writeln('DNI:');
+        readln(dni);
+        if (dni <> -1) then begin
+            writeln('NRO INSCRIPCION:');
+            readln(nroInsc);
+            writeln('APELLIDO:');
+            readln(ape);
+            writeln('NOMBRE:');
+            readln(nom);
+            writeln('ANIO DE NACIMIENTO:');
+            readln(anionac);
+        end;
+    end;
+end;
+procedure cargarAlumnos(var v:vec_alumnos; var dimL:integer);
+var
+    alu:alumno;
+begin
+    leerAlumno(alu);
+    while (alu.dni <> - 1)and (dimL< dimF) do begin //condicion de corte y no pasarme de la dimF
+        dimL:=dimL+1;
+        v[dimL]:=alu;
+        leerAlumno(alu);
+    end;
+end;
+var
+    v:vec_alumnos;
+    i,dimL,cantPares, anio1,anio2:integer;
+    porcentaje:real;
+    apeViejo1,apeViejo2,nomViejo1,nomViejo2:cadena15;
+begin
+    cantPares:=0; //inicializo en 0 el contador de pares
+    anio1:=9999;
+    anio2:=999;
+    dimL:=0;
+    cargarAlumnos(v,dimL); //cargo el vector de alumnos
+    for i:=1 to dimL do begin 
+        if ( soloDigPares(v[dimL].dni)) then //verifico si en la posicion actual, en el campo dni el dni es par
+            cantPares:= cantPares +1; //si era par me suma 1
+        masViejos(v[dimL].anionac,v[dimL].ape,v[dimL].nom,anio1,anio2,apeViejo1,nomViejo1,apeViejo2,nomViejo2);
+    end;
+    porcentaje:= calcularPorcentaje(cantPares, dimL); 
+    writeln('Porcentaje de alumnos con DNI compuesto sólo por dígitos pares: ', porcentaje:2:2, '%');
+    writeln('Apellido y nombre de los dos alumnos de mayor edad edad son:', apeViejo1 , nomViejo1,' y ', apeViejo2 , nomViejo2);
+end.
+
+{10. Realizar un programa que lea y almacene el salario de los empleados de una empresa de turismo (a lo
+sumo 300 empleados). La carga finaliza cuando se lea el salario 0 (que no debe procesarse) o cuando se
+completa el vector. Una vez finalizada la carga de datos se pide:
+a) Realizar un módulo que incremente el salario de cada empleado en un 15%. Para ello, implementar un
+módulo que reciba como parámetro un valor real X, el vector de valores reales y su dimensión lógica y
+retorne el mismo vector en el cual cada elemento fue multiplicado por el valor X.
+b) Realizar un módulo que muestre en pantalla el sueldo promedio de los empleados de la empresa.}
+program Hello; // A LO SUMO  es <=
+const
+    dimF = 3; //300; uso 5 para probar
+type
+    rango= 1..dimF;
+    vec_Empleados = array [rango] of real;
+
+function promedio (sueldoTotal:real; dimL:rango):real;
+begin   
+    promedio:=sueldoTotal/dimL;
+end;
+Procedure incrementarsueldo (x: real; var v: vec_Empleados; dimL:integer);
+var
+    i:integer;
+begin
+    for i:=1 to dimL do
+     v[i]:= v[i] + (v[i]*x);
+end;
+
+Procedure imprimir (v: vec_Empleados;dimL:integer);
+var
+     i: integer;
+     total_sueldo:real;
+Begin
+    total_sueldo:=0;
+    for i:=1 to dimL do
+	    total_sueldo:= total_sueldo + v[i];
+    writeln('El sueldo promedio de los empleados de la empresa es: $ ',(total_sueldo/dimL):2:2);
+End;
+Procedure cargarsueldos (var v:vec_Empleados; var dimL:integer);
+var
+    sueldo:real;
+begin
+    writeln('SUELDO:');
+    readln(sueldo);
+    while (sueldo <> 0 ) and (dimL<dimF) do begin
+        dimL:=dimL+1;
+        v[dimL]:=sueldo;
+        writeln('SUELDO:');
+        readln(sueldo);
+    end;
+end;
+var
+    vec:vec_Empleados;
+    i,dimL:integer;
+    numX:real;
+begin
+    dimL:=0;
+    numX:=1.15;
+    cargarsueldos(vec,dimL);
+    incrementarsueldo(numX,vec,dimL);
+    imprimir(vec,dimL);
+end.
+
+{11. El colectivo de fotógrafos ArgenPics desea conocer los gustos de sus seguidores en las redes sociales. Para
+ello, para cada una de las 200 fotos publicadas en su página de Facebook, cuenta con la siguiente
+información: título de la foto, el autor de la foto, cantidad de Me gusta, cantidad de clics y cantidad de
+comentarios de usuarios. Realizar un programa que lea y almacene esta información. Una vez finalizada la
+lectura, el programa debe procesar los datos e informar:
+a) Título de la foto más vista (la que posee mayor cantidad de clics).
+b) Cantidad total de Me gusta recibidas a las fotos cuyo autor es el fotógrafo “Art Vandelay”.
+c) Cantidad de comentarios recibidos para cada una de las fotos publicadas en esa página}
+program Hello;
+const
+    dimF = 200;
+type
+    rango_vec= 1..dimF;
+    cadena20= string[20];
+    
+    fotoPublicada = record
+        titulo: cadena20;
+        autor: cadena20;
+        cant_likes: integer;
+        cant_clicks: integer;
+        cant_coments: integer;
+    end;
+    
+    vec_publicaciones= array [rango_vec] of fotoPublicada;
+
+function likesAV (autorAct:cadena20; cantLikes:integer):integer;
+begin
+    if (autorAct = 'ART VANDELAY') then
+        likesAV:= cantLikes
+    else
+        likesAV:=0;
+end;
+
+procedure fotoMasVista(cantClicks:integer; var maxVista:integer; titAct:cadena20; var titMax: cadena20);
+begin
+    if(cantClicks > maxVista) then begin
+        maxVista:=cantClicks;
+        titMax:=titAct;
+    end;
+    
+end;
+
+procedure leerFoto (var fp:fotoPublicada);
+begin
+    with fp do begin
+        writeln ('Ingrese el titulo:');
+            readln(titulo);
+            writeln ('Ingrese el autor:');
+            readln(autor);
+            writeln ('Ingrese la cant de likes:');
+            readln(cant_likes);
+            writeln ('Ingrese la cantidad de clicks:');
+            readln(cant_clicks);
+            writeln ('Ingrese la cantidad de comentarios:');
+            readln(cant_coments);
+    end;
+end;
+
+procedure cargarVector(var v:vec_publicaciones);
+var
+    foto:fotoPublicada;
+    i:rango_vec;
+begin
+    for i:=1 to dimF do begin
+        leerFoto(foto); //leer el registro
+        v[i]:=foto; //cargarlo en la posicion actual del vector;
+    end;
+    
+end;
+var
+    vec:vec_publicaciones;
+    i,maxVista,cantLikesAV:integer;
+    titMax:cadena20;
+begin
+    maxVista:=-1;
+    cantLikesAV:=0;
+    cargarVector(vec);
+    for i:=1 to dimF do begin
+        fotoMasVista(vec[i].cant_clicks,maxVista,vec[i].titulo,titMax);
+        cantLikesAV:=cantLikesAV + likesAV(vec[i].autor, vec[i].cant_likes);
+        writeln ('Cantidad de comentarios en la foto ', i,' fue ', vec[i].cant_coments);
+    end;
+    writeln(titMax, 'fue la foto más vista -la que posee mayor cantidad de clics-');
+    writeln('Cantidad total de Me gusta recibidas a las fotos cuyo autor es el fotógrafo “Art Vandelay” es: ',cantLikesAV);
+end.
+
+{12-En astrofísica, una galaxia se identifica por su nombre, su tipo (1. elíptica; 2. espiral; 3. lenticular; 4.
+irregular), su masa (medida en kg) y la distancia en pársecs (pc) medida desde la Tierra. La Unión
+Astronómica Internacional cuenta con datos correspondientes a las 53 galaxias que componen el Grupo
+Local. Realizar un programa que lea y almacene estos datos y, una vez finalizada la carga, informe:
+a) la cantidad de galaxias de cada tipo.
+b) la masa total acumulada de las 3 galaxias principales (la Vía Láctea, Andrómeda y Triángulo) y el
+porcentaje que esto representa respecto a la masa de todas las galaxias.
+c) la cantidad de galaxias no irregulares que se encuentran a menos de 1000 pc.
+d) el nombre de las dos galaxias con mayor masa y el de las dos galaxias con menor masa.}
+program Hello;
+const
+    fin = 53;
+type
+    rangoGalaxia=1..fin;
+    rangoTipo = 1..4;
+    cadena10 = string[10];
+    galaxia = record
+        nombre: cadena10;
+        tipo:rangoTipo;
+        masa:real;
+        distancia:integer;
+    end;
+    
+vec_galaxias = array [rangoGalaxia] of galaxia; 
+vec_Tipo = array [rangoTipo] of integer;
+procedure imprimir (vt:vec_Tipo);
+var
+    i:rangoTipo;
+begin
+    for i:=1 to 4 do
+        writeln ('Para la galaxia del tipo', i,' hay: ',vt[i],' galaxias');
+end;
+procedure mayorMasa(masaAct:real; nomActual:cadena10; var maxMasa1,maxMasa2:real; var nomMax1,nomMax2:cadena10);
+begin
+    if (masaAct>maxMasa1) then begin
+        maxMasa2:=maxMasa1;
+        nomMax2:=nomMax1;
+        maxMasa1:=masaAct;
+        nomMax1:=nomActual;
+    end
+    else
+        if(masaAct>maxMasa2) then begin
+            maxMasa2:=masaAct;
+            nomMax2:=nomActual;
+        end;
+end;
+procedure menorMasa(masaAct:real; nomActual:cadena10; var minMasa1,minMasa2:real; var nomMin1,nomMin2:cadena10);
+begin
+    if (masaAct < minMasa1) then begin
+        minMasa2:= minMasa1;
+        nomMin2:= nomMin1;
+        minMasa1:= masaAct;
+        nomMin1:= nomActual;
+    end
+    else
+        if(masaAct < minMasa2) then begin
+            minMasa2:=masaAct;
+            nomMin2:=nomActual;
+        end;
+end;
+function noIrregulares (tipoGal:rangoTipo; distActual: integer):integer;
+begin
+    if (tipoGal <> 4) and (distActual < 1000) then
+        noIrregulares:=1
+    else
+        noIrregulares:=0;
+end;
+
+function porcenMasas (totalMasas, masa3gal:real):real;
+begin
+    porcenMasas:= (masa3gal/totalMasas)*100;
+end;
+
+function sumaMasas3Gal (nomActual:cadena10; masaActual:real): real;
+begin
+    if (nomActual= 'VIA LACTEA') or (nomActual= 'ANDROMEDA') or (nomActual= 'TRIANGULO') then
+        sumaMasas3Gal:=masaActual //voy sumandole la masa de la galaxia que leo actualmente
+    else
+        sumaMasas3Gal:=0;
+end;
+
+procedure cantGalaxiaXTipo (tipoActual:rangoTipo; var vt:vec_Tipo);
+begin
+    vt[tipoActual]:=vt[tipoActual]+1; //al vector de tipo de galaxia en esa posicion le sumo 1     
+end;
+procedure cargarVectorTipo (var vt:vec_Tipo);
+var
+    i:rangoTipo;
+begin
+    for i:=1 to 4 do
+        vt[i]:=0; //inicializo el contador en 0
+end;
+procedure leerGalaxia (var gal:galaxia);
+begin
+    with gal do begin
+        writeln('NOMBRE:');
+        readln(nombre);
+        writeln('TIPO');
+        readln(tipo);
+        writeln('MASA EN KG:');
+        readln(masa);
+        writeln('DISTANCIA EN PARSECS:');
+        readln(distancia);
+    end;
+end;
+procedure cargarVector (var v:vec_galaxias);
+var
+    i:integer;
+    g:galaxia;
+begin
+    for i:=1 to fin do begin
+        leerGalaxia(g);
+        v[i]:=g;
+    end;
+end;
+var
+    vg:vec_galaxias;
+    vt:vec_Tipo;
+    i:rangoGalaxia;
+    masaTotal,masa3Galaxias,porcentaje,maxMasa1,maxMasa2,minMasa1, minMasa2:real;
+    cantNoIrreg:integer;
+    nomMax1,nomMax2,nomMin1,nomMin2:cadena10;
+begin
+    maxMasa1:=-1;
+    maxMasa2:=-1;
+    minMasa1:=9999;
+    minMasa2:=9999;
+    masaTotal:=0;
+    masa3Galaxias:=0;
+    cantNoIrreg:=0;
+    cargarVector(vg);
+    cargarVectorTipo(vt);
+    for i:=1 to fin do begin
+        cantGalaxiaXTipo(vg[i].tipo,vt);
+        masa3Galaxias:= masa3Galaxias + sumaMasas3Gal(vg[i].nombre, vg[i].masa);
+        masaTotal:= masaTotal + vg[i].masa;
+        cantNoIrreg:= cantNoIrreg + noIrregulares(vg[i].tipo, vg[i].distancia);
+        mayorMasa(vg[i].masa,vg[i].nombre,maxMasa1,maxMasa2,nomMax1,nomMax2);
+        menorMasa(vg[i].masa,vg[i].nombre,minMasa1,minMasa2,nomMin1,nomMin2);
+    end;
+    porcentaje:=porcenMasas(masaTotal,masa3Galaxias);
+    imprimir(vt);
+    writeln('Porcentaje de la masa total acumulada de las 3 galaxias principales respecto a la masa de todas las galaxias: ',porcentaje:6:2,' $');
+    writeln('Nombre de las dos galaxias con mayor masa: ',nomMax1,' y ',nomMax2,' y el de las dos galaxias con menor masa es ', nomMin1, ' y ',nomMin2);
+end.
+
+PROGRAM ejercicio14;
+CONST
+    dimF = 3;
+
+TYPE
+    
+    
+    vector50 = array [1..dimF] of real;
+    
+    punto = record
+      lugar:string;
+      temperatura:real;
+    end;
+    
+
+procedure leerPunto(var p: punto);
+begin
+  write('Nombre del lugar: ');
+  readln(p.lugar);
+  write('Ingrese la temperatura del lugar: ');
+  readln(p.temperatura);
+end;
+
+procedure maximo(temperatura:real; anio:integer; var tempMax: real; var anioMax: integer);
+begin
+   if (temperatura > tempMax) then begin
+      tempMax:= temperatura;
+      anioMax:= anio;
+   end;
+end;
+
+function determinarMayor(v:vector50): integer; // recibe el vector y retorna la posicion del mayor
+var
+  i:integer; promedioMax: real; posMax: integer;
+begin
+  promedioMax:= 0;
+  for i:= 1 to 50 do begin
+     if (v[i] > promedioMax) then begin
+       promedioMax:= v[i];
+       posMax:= i;
+     end;
+  end;
+  determinarMayor:= posMax; // Retorno la posicion del mayor promedio en el vector
+end;
+
+var
+    i,j,anioMax:integer;
+    p:punto;
+    tempMax: real;
+    totalAnio: real;
+    vector: vector50;
+
+begin
+  tempMax:= 0;
+  for i:= 1 to 50 do begin // Leo por cada anio
+    totalAnio:= 0; // Acumulo las temperaturas del anio i
+    for j:= 1 to 100 do begin // Leo cada punto
+        leerPunto(p);
+        maximo(p.temperatura, i, tempMax, anioMax); // actualizo anioMax
+        totalAnio:= totalAnio + p.temperatura;
+    end;
+    vector[i]:= totalAnio/50; // Asigno al vector de 50, el promedio del anio i
+  end;
+  writeln('El año con mayor temperatura promedio a nivel mundial fue: ', determinarMayor(vector));
+  writeln('El año con la mayor temperatura detectada en algún punto del planeta en los últimos 50 años fue: ', anioMax);
+end.
+
+//MMM ESTE REVISAR EL VALOR  DE HORAS X MONTO
+{14-El repositorio de código fuente más grande en la actualidad, GitHub, desea estimar el monto invertido en
+los proyectos que aloja. Para ello, dispone de una tabla con información de los desarrolladores que
+participan en un proyecto de software, junto al valor promedio que se paga por hora de trabajo:
+CÓDIGO ROL DEL DESARROLLADOR VALOR/HORA (USD)
+1 Analista Funcional 35,20
+2 Programador 27,45
+3 Administrador de bases de datos 31,03
+4 Arquitecto de software 44,28
+5 Administrador de redes y seguridad 39,87
+Nota: los valores/hora se incluyen a modo de ejemplo
+Realizar un programa que procese la información de los desarrolladores que participaron en los 1000
+proyectos de software más activos durante el año 2017. De cada participante se conoce su país de
+residencia, código de proyecto (1 a 1000), el nombre del proyecto en el que participó, el rol que cumplió en
+dicho proyecto (1 a 5) y la cantidad de horas trabajadas. La lectura finaliza al ingresar el código de proyecto
+-1, que no debe procesarse. Al finalizar la lectura, el programa debe informar:
+a) El monto total invertido en desarrolladores con residencia en Argentina.
+b) La cantidad total de horas trabajadas por Administradores de bases de datos.
+c) El código del proyecto con menor monto invertido.
+d) La cantidad de Arquitectos de software de cada proyecto.}
+program Hello;
+const
+    cantProy=1000;
+type
+    rangoVec= 1..5;
+    rangoProy= 1..cantProy;
+    cadena20= string[20];
+    desarrollador =record
+        cod:rangoVec;
+        rol:cadena20;
+        valor_hora:real;
+    end;
+    participante = record
+        paisRes:cadena20;
+        codProy:1..cantProy;
+        nomProy:cadena20;
+        rolCumplido:rangoVec;
+        cantHorasTrab:integer; //deberia ser real?
+    end;
+    vec_desarrolladores = array [rangoVec] of desarrollador;
+    vec_desarrolladores2017 = array [rangoVec] of participante;
+
+function arqSoftware (rol:rangoVec):integer;
+begin
+    if (rol = 4) then
+        arqSoftware:=1
+    else
+        arqSoftware:=0;
+end;
+    
+procedure menorMontoInv(proyectoAct:rangoProy;HorasTrab:integer; var menorInv:rangoProy; var montoMin:integer);
+begin
+    if (HorasTrab < montoMin) then begin
+        menorInv:=proyectoAct;
+        montoMin:=HorasTrab;
+    end;
+end;
+function adminBDHs (rol:rangoVec; horas:integer):integer;
+begin
+    if (rol = 3) then
+        adminBDHs:=horas
+    else
+        adminBDHs:=0;
+end;
+function invertidoArg (pais:cadena20; horas:integer):integer;
+begin
+    if (pais = 'ARGENTINA') then
+        invertidoArg:=horas
+    else
+        invertidoArg:=0;
+end;
+procedure leerParticipante (var p:participante);
+begin
+    with p do begin
+        writeln('CODIGO DEL PROYECTO:');
+        readln(codProy);
+        if (codProy <> -1) then begin
+            writeln('ROL');
+            readln(rolCumplido);
+            writeln('HORAS TRABAJADAS');
+            readln(cantHorasTrab);
+        end;
+    end;
+end;
+procedure cargarParticipantes (var v:vec_desarrolladores2017; var dimL: integer);
+var
+    part:participante;
+begin
+    leerParticipante(part);
+    while (part.codProy <> -1) and (dimL < cantProy) do begin
+        dimL:=dimL+1;
+        v[dimL]:= part;
+        leerParticipante(part);
+    end;
+end;
+var
+    vec: vec_desarrolladores;
+    v:vec_desarrolladores2017;
+    i,dimL,totalAdminBD,montoMin, cantARQ:integer;
+    montoTotalArg:real;
+    menorInv:rangoProy;
+begin
+    dimL:=0;
+    montoTotalArg:=0;
+    totalAdminBD:=0;
+    montoMin:=9999;
+    cantARQ:=0;
+    cargarVector(vec); //se dispone , LA LECTURA TAMBIEN?
+    cargarParticipantes(v, dimL);
+    for i:=1 to dimL do begin
+        montoTotalArg:=montoTotalArg + invertidoArg(v[i].paisRes, v[i].cantHorasTrab);
+        totalAdminBD:=totalAdminBD + adminBDHs(v[i].rolCumplido, v[i].cantHorasTrab);
+        menorMontoInv(v[i].codProy,v[i].cantHorasTrab,menorInv,montoMin);
+        cantARQ:=cantARQ+ arqSoftware(v[i].rolCumplido);
+    end;
+    writeln('El monto total invertido en desarrolladores con residencia en Argentina es: $ ',montoTotalArg:6:2);
+    writeln('Total de horas trabajadas por Administradores de bases de datos es: ', totalAdminBD);
+    writeln('El código del proyecto con menor monto invertido. es: ', menorInv);
+    writeln('La cantidad de Arquitectos de software de cada proyecto es:', cantARQ);
+end.
+
