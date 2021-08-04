@@ -127,4 +127,4 @@ begin
     total:= x + 0.04*x;
     writeln('La transacción será de',total,'','pesos argentinos');
 end.
-
+ 
